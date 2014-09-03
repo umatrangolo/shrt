@@ -1,0 +1,26 @@
+# TODO
+
+- REST routes:
+1. API for adding a shortened URL:
+   > PUT /shrts
+   > body: { url: [url to shrt], proposal: [proposed token]* }
+   < 201 OK { url: [url to shrt], shrt: [shrtned url] }
+   < 403 KO { url: [url to shrt] } // proposed token (if any) is already taken
+
+2. API to get a shortened URL:
+   > GET /shrts/<token>
+   < 301 to [original url]
+   < 404 // if no url for given token
+
+3. API for deleting a shrt url
+   > DELETE /shrts/<token>
+   < 200 OK
+   < 404 // if no url for given token
+
+4. API for listing all the shrt urls
+   > GET /shrts
+   < 200 OK
+   < body: { ... all urls json encoded ...}
+
+- Store them in H2
+- Count each time a token/url is used
