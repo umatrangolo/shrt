@@ -9,4 +9,15 @@ object Shrts extends Controller {
     Ok("shrts goes here!")
   }
 
+  def create(url: String) = Action {
+    Ok(s"Creating shrt for $url")
+  }
+
+  def redirect(shrt: String) = Action {
+    Ok(s"Redirecting with $shrt")
+  }
+
+  def delete(shrt: String) = Action {
+    Ok(s"Deleting $shrt")
+  }
 }
