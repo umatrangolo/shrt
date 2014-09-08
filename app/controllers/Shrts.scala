@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
+import utils._
 
 object Shrts extends Controller {
 
@@ -20,4 +21,5 @@ object Shrts extends Controller {
   def delete(shrt: String) = Action {
     Ok(s"Deleting $shrt")
   }
+
 }

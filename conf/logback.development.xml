@@ -1,0 +1,43 @@
+<configuration>
+
+  <conversionRule conversionWord="coloredLevel" converterClass="play.api.Logger$ColoredLevel"/>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>logs/application.log</file>
+    <encoder>
+      <pattern>%date [%thread] %level %logger - %message %xException%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ACCESS" class="ch.qos.logback.core.FileAppender">
+    <file>logs/access.log</file>
+    <encoder>
+      <pattern>%date %message%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%date %coloredLevel %thread %logger{15} - %message%n%xException{5}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="access" level="INFO" additivity="false">
+    <appender-ref ref="ACCESS"/>
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <logger name="application" level="DEBUG"/>
+  <logger name="controllers" level="DEBUG"/>
+  <logger name="models" level="DEBUG"/>
+  <logger name="utils" level="DEBUG"/>
+  <logger name="views" level="DEBUG"/>
+
+  <logger name="play" level="DEBUG"/>
+
+  <root level="INFO">
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</configuration>

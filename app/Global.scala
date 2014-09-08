@@ -5,8 +5,9 @@ import play.api.mvc.Results._
 import play.api.mvc._
 
 import scala.concurrent.Future
+import utils._
 
-object Global extends GlobalSettings {
+object Global extends WithFilters(AccessLoggingFilter) {
 
   override def onStart(app: Application) {
     Logger.info("Application has started")
