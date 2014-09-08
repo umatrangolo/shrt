@@ -6,10 +6,12 @@ import play.api.mvc._
 
 import scala.concurrent.Future
 import utils._
+import store._
 
 object Global extends WithFilters(AccessLoggingFilter) {
 
   override def onStart(app: Application) {
+    val shrtDao = ShrtDao()
     Logger.info("Application has started")
   }
 

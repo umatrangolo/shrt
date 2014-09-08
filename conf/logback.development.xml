@@ -34,6 +34,7 @@
   <logger name="views" level="DEBUG"/>
 
   <logger name="play" level="DEBUG"/>
+  <logger name="com.jolbox" level="DEBUG"/>
 
   <root level="INFO">
     <appender-ref ref="FILE"/>
