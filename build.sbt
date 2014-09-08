@@ -13,4 +13,7 @@ libraryDependencies ++= Seq(
   ws
 )
 
-libraryDependencies += "com.h2database" % "h2" % "1.4.181"
+libraryDependencies ++= Seq(
+  "com.h2database" % "h2" % "1.4.181",
+  "org.apache.commons" % "commons-lang3" % "3.3.2"
+)
