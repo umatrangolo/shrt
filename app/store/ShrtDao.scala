@@ -55,6 +55,14 @@ trait ShrtDao {
   def save(shrt: Shrt): Option[Long]
 
   /**
+    * Incs the count on the Shrt with the given token.
+    *
+    * @param token the unique token of the desired Shrt.
+    * @return an optional current count if token was found.
+    */
+  def inc(token: String): Option[Long]
+
+  /**
     * Soft deleted a Shrt.
     *
     * @param token the unique token for the Shrt
@@ -109,6 +117,19 @@ private[store] class ShrtDaoH2Impl extends ShrtDao {
     SQL("insert into shrts(url, shrt, count) values ({url}, {shrt}, {count})")
       .on('url -> shrt.url.toString, 'shrt -> shrt.shrt, 'count -> shrt.count)
       .executeInsert()
+  }
+
+  override def inc(token: String): Option[Long] = {
+    val shrt = read(token)
+
+    if (shrt.isDefined) {
+      DB.withConnection("shrt") { implicit conn =>
+        SQL("update shrts set count = {count} where shrt = {token}")
+          .on('token -> shrt.get.shrt, 'count -> (shrt.get.count + 1).toString) // TODO ugly!
+          .executeUpdate()
+      }
+      Some(shrt.get.count + 1)
+    } else None
   }
 
   override def delete(token: String): Option[Shrt] = {

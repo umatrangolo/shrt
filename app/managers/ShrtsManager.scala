@@ -28,7 +28,11 @@ private[managers] class ShrtManagerImpl(private val shrtDao: ShrtDao, private va
     shrt
   }
 
-  override def redirect(token: String): Option[Shrt] = shrtDao.read(token)
+  override def redirect(token: String): Option[Shrt] = {
+    val shrt = shrtDao.read(token)
+    shrt.foreach { s => shrtDao.inc(s.shrt) }
+    shrt
+  }
 
   override def delete(token: String): Option[Shrt] = shrtDao.delete(token)
 
