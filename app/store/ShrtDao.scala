@@ -11,6 +11,8 @@ import play.api.db._
 
 import java.net.URL
 
+import scala.collection.LinearSeq
+
 trait ShrtDao {
 
   /**
@@ -35,6 +37,14 @@ trait ShrtDao {
     * @return an optional Shrt if found.
     */
   def read(token: String): Option[Shrt]
+
+  /**
+    * Returns all the stored shrts
+    *
+    * @return a linear seq (eventually empty) with all the stored shrts.
+    */
+  // TODO impl pagination
+  def all(): LinearSeq[Shrt]
 
   /**
     * Save a Shrt.
@@ -71,6 +81,7 @@ private[store] class ShrtDaoH2Impl extends ShrtDao {
     SQL("select count(*) from shrts").execute()
   }
 
+  // TODO how to force a single result ?
   override def read(url: URL): Option[Shrt] = DB.withConnection("shrt") { implicit conn =>
     SQL("select id, url, shrt, count, created_at from shrts where url = {url} and is_deleted = false")
       .on('url -> url.toString)
@@ -79,12 +90,19 @@ private[store] class ShrtDaoH2Impl extends ShrtDao {
       .headOption
   }
 
+  // TODO how to force a single result ?
   override def read(token: String): Option[Shrt] = DB.withConnection("shrt") { implicit conn =>
     SQL("select id, url, shrt, count, created_at from shrts where shrt = {token} and is_deleted = false")
       .on('token -> token)
       .as(long("id") ~ str("url") ~ str("shrt") ~ long("count") *)
       .map { case id ~ url ~ shrt ~ count => Shrt(new URL(url), shrt, count) }
       .headOption
+  }
+
+  override def all(): LinearSeq[Shrt] = DB.withConnection("shrt") { implicit conn =>
+    SQL("select id, url, shrt, count, created_at from shrts where is_deleted = false order by id desc")
+      .as(long("id") ~ str("url") ~ str("shrt") ~ long("count") *)
+      .map { case id ~ url ~ shrt ~ count => Shrt(new URL("http://" + url), shrt, count) } // TODO hack: fix me!
   }
 
   override def save(shrt: Shrt): Option[Long] = DB.withConnection("shrt") { implicit conn =>

@@ -1,14 +1,20 @@
 package managers
 
-import models._
-import store._
 import gens._
+
 import java.net.URL
+
+import models._
+
+import scala.collection.LinearSeq
+
+import store._
 
 trait ShrtsManager {
   def create(url: URL): Shrt
   def redirect(token: String): Option[Shrt]
   def delete(token: String): Option[Shrt]
+  def listAll(): LinearSeq[Shrt]
 }
 
 object ShrtsManager {
@@ -25,4 +31,6 @@ private[managers] class ShrtManagerImpl(private val shrtDao: ShrtDao, private va
   override def redirect(token: String): Option[Shrt] = shrtDao.read(token)
 
   override def delete(token: String): Option[Shrt] = shrtDao.delete(token)
+
+  override def listAll(): LinearSeq[Shrt] = shrtDao.all()
 }

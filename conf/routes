@@ -3,14 +3,14 @@
 # ~~~~
 
 # Home page
-GET     /shrts                                  controllers.Shrts.index
+GET     /shrts                                  controllers.Shrts.all
 
 # TODO move to an URL using a PathBindable
 PUT     /shrts/:url                             controllers.Shrts.create(url: String)
 
 GET     /shrts/:token                           controllers.Shrts.redirect(token: String)
 
-DELETE  /shrts/:shrt                            controllers.Shrts.delete(shrt: String)
+DELETE  /shrts/:token                           controllers.Shrts.delete(token: String)
 
 GET     /ping                                   controllers.Healthcheck.ping
 

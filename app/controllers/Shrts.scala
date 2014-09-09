@@ -16,7 +16,8 @@ object Shrts extends Controller {
   private val manager = ShrtsManager()
 
   def all = Action {
-    Ok("shrts goes here!")
+    val allShrts = manager.listAll()
+    Ok(JsArray(allShrts.map { toJson }))
   }
 
   def create(url: String) = Action {
