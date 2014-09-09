@@ -8,6 +8,7 @@ import java.net.URL
 trait ShrtsManager {
   def create(url: URL): Shrt
   def redirect(token: String): Option[Shrt]
+  def delete(token: String): Option[Shrt]
 }
 
 object ShrtsManager {
@@ -22,4 +23,6 @@ private[managers] class ShrtManagerImpl(private val shrtDao: ShrtDao, private va
   }
 
   override def redirect(token: String): Option[Shrt] = shrtDao.read(token)
+
+  override def delete(token: String): Option[Shrt] = shrtDao.delete(token)
 }

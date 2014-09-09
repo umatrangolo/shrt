@@ -3,6 +3,7 @@ package controllers
 import java.net.URL
 
 import managers._
+import models._
 
 import play.api._
 import play.api.libs.json._
@@ -14,13 +15,13 @@ object Shrts extends Controller {
 
   private val manager = ShrtsManager()
 
-  def index = Action {
+  def all = Action {
     Ok("shrts goes here!")
   }
 
   def create(url: String) = Action {
     val shrt = manager.create(new URL("http://" + url)) // TODO hack: fix me!
-    val json: JsValue = JsObject(Seq("url" -> JsString(shrt.url.toString), "shrt" -> JsString(shrt.shrt), "count" -> JsNumber(shrt.count)))
+    val json: JsValue = toJson(shrt)
     Ok(json)
   }
 
@@ -31,7 +32,12 @@ object Shrts extends Controller {
     }
   }
 
-  def delete(shrt: String) = Action {
-    Ok(s"Deleting $shrt")
+  def delete(token: String) = Action {
+    manager.delete(token) match {
+      case Some(shrt) => Ok(toJson(shrt))
+      case None => NotFound(s"Token $token was not found")
+    }
   }
+
+  private def toJson(shrt: Shrt) = JsObject(Seq("url" -> JsString(shrt.url.toString), "shrt" -> JsString(shrt.shrt), "count" -> JsNumber(shrt.count)))
 }

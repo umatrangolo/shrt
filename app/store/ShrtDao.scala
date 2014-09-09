@@ -43,6 +43,14 @@ trait ShrtDao {
     * @return an optional long with the auto-generated id for the Shrt.
     */
   def save(shrt: Shrt): Option[Long]
+
+  /**
+    * Soft deleted a Shrt.
+    *
+    * @param token the unique token for the Shrt
+    * @return an optional deleted Shrt if found.
+    */
+  def delete(token: String): Option[Shrt]
 }
 
 object ShrtDao {
@@ -83,5 +91,18 @@ private[store] class ShrtDaoH2Impl extends ShrtDao {
     SQL("insert into shrts(url, shrt, count) values ({url}, {shrt}, {count})")
       .on('url -> shrt.url.toString, 'shrt -> shrt.shrt, 'count -> shrt.count)
       .executeInsert()
+  }
+
+  override def delete(token: String): Option[Shrt] = {
+    val shrt = read(token)
+
+    if (shrt.isDefined) {
+      DB.withConnection("shrt") { implicit conn =>
+        SQL("update shrts set is_deleted = true, deleted_at = {now} where shrt = {token}")
+          .on('now -> new java.util.Date(), 'token -> token) // TODO fix me!
+          .executeUpdate()
+      }
+      shrt
+    } else None
   }
 }
