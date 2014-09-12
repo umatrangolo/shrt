@@ -16,13 +16,6 @@ import scala.collection.LinearSeq
 trait ShrtDao {
 
   /**
-    * Makes sure the DB is reachable.
-    *
-    * @return true if the DB is there
-    */
-  def ping(): Boolean
-
-  /**
     * Read a Shrt from the original url.
     *
     * @param url the url to find the Shrt for.
@@ -82,12 +75,6 @@ private[store] object ShrtDaoH2Impl {
 
 private[store] class ShrtDaoH2Impl extends ShrtDao {
   import ShrtDaoH2Impl._
-
-  log.info("Starting db ...")
-
-  override def ping(): Boolean = DB.withConnection("shrt") { implicit conn =>
-    SQL("select count(*) from shrts").execute()
-  }
 
   // TODO how to force a single result ?
   override def read(url: URL): Option[Shrt] = DB.withConnection("shrt") { implicit conn =>

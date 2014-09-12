@@ -3,15 +3,15 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-import store.ShrtDao
+import store.HealthcheckDao
 
 import utils._
 
 object Healthcheck extends Controller {
-  private val store = ShrtDao()
+  private val healthcheckDao = HealthcheckDao()
 
   def ping = Action {
-    if (store.ping) Ok("Pong!") else InternalServerError("App is down")
+    if (healthcheckDao.ping) Ok("Pong!") else InternalServerError("App is down")
   }
 
 }
