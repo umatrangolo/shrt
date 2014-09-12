@@ -17,8 +17,8 @@ abstract class WithFakeDb(
       Helpers.inMemoryDatabase() +
         ("applyEvolutions.test" -> "true") +
         ("db.shrt.url" -> "jdbc:h2:mem:shrt") +
-        ("db.default.user" -> "sa") +
-        ("db.default.password" ->"sa")),
+        ("db.shrt.user" -> "sa") +
+        ("db.shrt.password" ->"sa")),
   val scripts: LinearSeq[String] = LinearSeq.empty[String]
 ) extends Around with Scope {
   implicit def implicitApp = app
@@ -31,7 +31,7 @@ abstract class WithFakeDb(
   private lazy val h2ds: javax.sql.DataSource = {
     import org.h2.jdbcx.JdbcDataSource
 
-    val jdbcUrl = app.additionalConfiguration("db.default.url").asInstanceOf[String]
+    val jdbcUrl = app.additionalConfiguration("db.shrt.url").asInstanceOf[String]
     val ds = new JdbcDataSource()
     ds.setURL(jdbcUrl)
     ds.setUser("sa")
