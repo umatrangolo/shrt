@@ -17,3 +17,14 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.181",
   "org.apache.commons" % "commons-lang3" % "3.3.2"
 )
+
+instrumentSettings
+
+ScoverageKeys.minimumCoverage := 70
+
+ScoverageKeys.failOnMinimumCoverage := false
+
+ScoverageKeys.highlighting := {
+  if (scalaBinaryVersion.value == "2.10") false
+  else false
+}
