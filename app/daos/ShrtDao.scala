@@ -1,4 +1,4 @@
-package store
+package daos
 
 import anorm._
 import anorm.SqlParser._
@@ -69,11 +69,11 @@ object ShrtDao {
   def apply(): ShrtDao = instance
 }
 
-private[store] object ShrtDaoH2Impl {
+private[daos] object ShrtDaoH2Impl {
   val log = Logger(this.getClass)
 }
 
-private[store] class ShrtDaoH2Impl extends ShrtDao {
+private[daos] class ShrtDaoH2Impl extends ShrtDao {
   import ShrtDaoH2Impl._
 
   // TODO how to force a single result ?

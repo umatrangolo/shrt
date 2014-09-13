@@ -3,7 +3,7 @@ package controllers
 import play.api._
 import play.api.mvc._
 
-import store.HealthcheckDao
+import daos.HealthcheckDao
 
 import utils._
 

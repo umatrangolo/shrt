@@ -8,7 +8,7 @@ import models._
 
 import scala.collection.LinearSeq
 
-import store._
+import daos._
 
 trait ShrtsManager {
   def create(url: URL): Shrt

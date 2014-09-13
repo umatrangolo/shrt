@@ -1,4 +1,4 @@
-package store
+package daos
 
 import org.junit.runner._
 

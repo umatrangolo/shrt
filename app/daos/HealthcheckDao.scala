@@ -1,4 +1,4 @@
-package store
+package daos
 
 import anorm.SqlParser._
 import anorm._
@@ -23,11 +23,11 @@ object HealthcheckDao {
   def apply(): HealthcheckDao = instance
 }
 
-private[store] object HealthcheckDaoH2Impl {
+private[daos] object HealthcheckDaoH2Impl {
   val log = Logger(this.getClass)
 }
 
-private[store] class HealthcheckDaoH2Impl extends HealthcheckDao {
+private[daos] class HealthcheckDaoH2Impl extends HealthcheckDao {
   import HealthcheckDaoH2Impl._
 
   override def ping(): Boolean = DB.withConnection("shrt") { implicit conn =>
