@@ -15,8 +15,11 @@ class HealthcheckSpec extends PlaySpecification {
         ("db.shrt.user" -> "sa") +
         ("db.shrt.password" ->"sa")),
       port = 19000) {
-      val response = await(WS.url(s"http://localhost:19000/ping").execute())
-      response.status must equalTo(OK)
+      val Some(result)  = route(FakeRequest(GET, "/ping"))
+
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsString(result) must contain("Pong!")
     }
   }
 }
