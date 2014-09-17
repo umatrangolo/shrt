@@ -1,4 +1,4 @@
-package store
+package daos
 
 import daos.ShrtDao
 import models.Shrt
@@ -44,13 +44,13 @@ class ShrtDaoSpec extends Specification {
     }
     "inc the `count` field in a pre-existing Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.inc("fcbk") === Some(10)
-      dao.read("fcbk") === Some(Shrt(new java.net.URL("http://www.facebooks.com"), "fcbk", 10))
+      dao.read("fcbk") === Some(Shrt(new java.net.URL("http://www.facebook.com"), "fcbk", 10))
     }
     "return None after trying to inc the `count` field of a non existent Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.inc("absent") === None
     }
     "delete a Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
-      dao.delete("fcbk") === Some(Shrt(new java.net.URL("http://www.facebooks.com"), "fcbk", 9))
+      dao.delete("fcbk") === Some(Shrt(new java.net.URL("http://www.facebook.com"), "fcbk", 9))
       dao.read("fcbk") === None
     }
     "return a None after trying to delete a non existent Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
