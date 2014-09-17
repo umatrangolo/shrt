@@ -40,5 +40,9 @@ object Shrts extends Controller {
     }
   }
 
-  private def toJson(shrt: Shrt) = JsObject(Seq("url" -> JsString(shrt.url.toString), "shrt" -> JsString(shrt.shrt), "count" -> JsNumber(shrt.count)))
+  private def toJson(shrt: Shrt) = JsObject(Seq(
+    "url" -> JsString(shrt.url.toString),
+    "shrt" -> JsString(shrt.shrt),
+    "count" -> JsNumber(shrt.count)
+  ))
 }
