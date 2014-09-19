@@ -26,7 +26,7 @@ abstract class WithFakeDb(
   }
 }
 
-class WithServerAndFakeDb(
+abstract class WithServerAndFakeDb(
   app: FakeApplication,
   port: Int = Helpers.testServerPort,
   val scripts: LinearSeq[String] = LinearSeq.empty[String]
