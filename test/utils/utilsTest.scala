@@ -12,13 +12,7 @@ import play.api.test._
 import scala.collection.LinearSeq
 
 abstract class WithFakeDb(
-  val app: FakeApplication = FakeApplication(
-    additionalConfiguration =
-      Helpers.inMemoryDatabase() +
-        ("applyEvolutions.test" -> "true") +
-        ("db.shrt.url" -> "jdbc:h2:mem:shrt") +
-        ("db.shrt.user" -> "sa") +
-        ("db.shrt.password" ->"sa")),
+  val app: FakeApplication = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
   val scripts: LinearSeq[String] = LinearSeq.empty[String]
 ) extends Around with Scope {
   implicit def implicitApp = app
@@ -35,7 +29,7 @@ abstract class WithFakeDb(
     val ds = new JdbcDataSource()
     ds.setURL(jdbcUrl)
     ds.setUser("sa")
-    ds.setPassword("sa")
+    ds.setPassword("")
 
     ds
   }
