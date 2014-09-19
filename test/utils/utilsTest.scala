@@ -15,17 +15,36 @@ abstract class WithFakeDb(
   val app: FakeApplication = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
   val scripts: LinearSeq[String] = LinearSeq.empty[String]
 ) extends Around with Scope {
+  import DbUtils._
+
   implicit def implicitApp = app
 
   override def around[T: AsResult](t: => T): Result = Helpers.running(app) {
-    scripts.foreach { runScript }
+    val jdbcUrl = app.additionalConfiguration("db.shrt.url").asInstanceOf[String]
+    scripts.foreach { script => runScript(jdbcUrl, script) }
     AsResult.effectively(t)
   }
+}
 
-  private lazy val h2ds: javax.sql.DataSource = {
+class WithServerAndFakeDb(
+  app: FakeApplication,
+  port: Int = Helpers.testServerPort,
+  val scripts: LinearSeq[String] = LinearSeq.empty[String]
+) extends WithServer(app, port) {
+  import DbUtils._
+
+  override def around[T: AsResult](t: => T): Result = Helpers.running(TestServer(port, app)) {
+    val jdbcUrl = app.additionalConfiguration("db.shrt.url").asInstanceOf[String]
+    scripts.foreach { script => runScript(jdbcUrl, script) }
+    AsResult.effectively(t)
+  }
+}
+
+object DbUtils {
+
+  def h2ds(jdbcUrl: String): javax.sql.DataSource = {
     import org.h2.jdbcx.JdbcDataSource
 
-    val jdbcUrl = app.additionalConfiguration("db.shrt.url").asInstanceOf[String]
     val ds = new JdbcDataSource()
     ds.setURL(jdbcUrl)
     ds.setUser("sa")
@@ -34,10 +53,10 @@ abstract class WithFakeDb(
     ds
   }
 
-  private def runScript(script: String): Int = {
+  def runScript(jdbcUrl: String, script: String): Int = {
     println(s"Executing script ${script} ...")
 
-    val conn = h2ds.getConnection
+    val conn = h2ds(jdbcUrl).getConnection
     val source = scala.io.Source.fromFile(script)
     val ddls = source.mkString
     source.close()
