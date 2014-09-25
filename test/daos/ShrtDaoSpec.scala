@@ -1,6 +1,5 @@
 package daos
 
-import daos.ShrtDao
 import models.Shrt
 
 import org.junit.runner._
