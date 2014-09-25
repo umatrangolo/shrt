@@ -15,7 +15,9 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.181",
-  "org.apache.commons" % "commons-lang3" % "3.3.2"
+  "org.apache.commons" % "commons-lang3" % "3.3.2",
+  "org.scaldi" %% "scaldi" % "0.4",
+  "org.scaldi" %% "scaldi-play" % "0.4.1"
 )
 
 instrumentSettings
