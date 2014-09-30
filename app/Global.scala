@@ -1,14 +1,19 @@
 import org.apache.commons.lang3.exception.ExceptionUtils._
 
+import daos._
+
 import play.api._
 import play.api.mvc.Results._
 import play.api.mvc._
 
 import scala.concurrent.Future
-import utils._
-import daos._
+import scaldi.play.ScaldiSupport
 
-object Global extends WithFilters(AccessLoggingFilter) {
+import utils._
+
+object Global extends WithFilters(AccessLoggingFilter) with ScaldiSupport {
+
+  override def applicationModule = AppModule
 
   override def onStart(app: Application) {
     val shrtDao = ShrtDao()

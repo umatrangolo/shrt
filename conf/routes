@@ -3,16 +3,16 @@
 # ~~~~
 
 # Home page
-GET     /shrts                                  controllers.Shrts.all
+GET     /shrts                                  @controllers.Shrts.all
 
 # TODO move to an URL using a PathBindable
-PUT     /shrts/:url                             controllers.Shrts.create(url: String)
+PUT     /shrts/:url                             @controllers.Shrts.create(url: String)
 
-GET     /shrts/:token                           controllers.Shrts.redirect(token: String)
+GET     /shrts/:token                           @controllers.Shrts.redirect(token: String)
 
-DELETE  /shrts/:token                           controllers.Shrts.delete(token: String)
+DELETE  /shrts/:token                           @controllers.Shrts.delete(token: String)
 
-GET     /ping                                   controllers.Healthcheck.ping
+GET     /ping                                   @controllers.Healthcheck.ping
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
