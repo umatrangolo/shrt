@@ -10,6 +10,8 @@ import scala.collection.LinearSeq
 
 import daos._
 
+import scaldi._
+
 trait ShrtsManager {
   def create(url: URL): Shrt
   def redirect(token: String): Option[Shrt]
@@ -17,11 +19,10 @@ trait ShrtsManager {
   def listAll(): LinearSeq[Shrt]
 }
 
-object ShrtsManager {
-  def apply() = new ShrtManagerImpl(ShrtDao(), ShrtGen())
-}
+private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsManager with Injectable {
+  private val shrtDao: ShrtDao = inject [ShrtDao]
+  private val shrtGen: ShrtGen = inject [ShrtGen]
 
-private[managers] class ShrtManagerImpl(private val shrtDao: ShrtDao, private val shrtGen: ShrtGen) extends ShrtsManager {
   override def create(url: URL): Shrt = shrtDao.read(url).getOrElse {
     val shrt = shrtGen.gen(url)
     shrtDao.save(shrt)

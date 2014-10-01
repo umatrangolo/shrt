@@ -11,10 +11,9 @@ import play.api.mvc._
 
 import utils._
 
-import scaldi._
+import scaldi.{ Injectable, Injector }
 
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
-
   private val manager = inject [ShrtsManager]
 
   def all = Action {

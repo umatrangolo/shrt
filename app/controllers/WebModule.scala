@@ -1,8 +1,8 @@
 package controllers
 
-import scaldi._
+import scaldi.Module
 
-trait WebModule extends Module {
+class WebModule extends Module {
   binding to new Healthcheck
   binding to new Shrts
 }

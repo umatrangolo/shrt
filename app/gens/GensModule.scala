@@ -1,7 +1,7 @@
 package gens
 
-import scaldi._
+import scaldi.Module
 
-trait GensModule extends Module {
-  bind[ShrtGen] to new ShrtGenRndImpl()
+class GensModule extends Module {
+  bind [ShrtGen] to new ShrtGenRndImpl
 }

@@ -7,7 +7,7 @@ import daos.HealthcheckDao
 
 import utils._
 
-import scaldi._
+import scaldi.{ Injectable, Injector }
 
 class Healthcheck(implicit jnj: Injector) extends Controller with Injectable {
   private val healthcheckDao = inject [HealthcheckDao]

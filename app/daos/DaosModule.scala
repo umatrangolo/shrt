@@ -1,8 +1,8 @@
 package daos
 
-import scaldi._
+import scaldi.Module
 
-trait DaosModule extends Module {
-  bind[ShrtDao] to new ShrtDaoH2Impl()
-  bind[HealthcheckDao] to new HealthcheckDaoH2Impl()
+class DaosModule extends Module {
+  bind[ShrtDao] to new ShrtDaoH2Impl
+  bind[HealthcheckDao] to new HealthcheckDaoH2Impl
 }

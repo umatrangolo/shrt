@@ -1,10 +1,7 @@
 package managers
 
-import scaldi._
+import scaldi.Module
 
-import daos._
-import gens._
-
-trait ManagersModule extends Module with DaosModule with GensModule {
-  bind [ShrtsManager] to injected [ShrtManagerImpl]
+class ManagersModule extends Module {
+  bind [ShrtsManager] to new ShrtManagerImpl
 }
