@@ -9,8 +9,3 @@ trait HealthcheckDao {
     */
   def ping(): Boolean
 }
-
-object HealthcheckDao {
-  private val instance = new HealthcheckDaoH2Impl()
-  def apply(): HealthcheckDao = instance
-}

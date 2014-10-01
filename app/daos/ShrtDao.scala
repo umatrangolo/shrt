@@ -56,8 +56,3 @@ trait ShrtDao {
     */
   def delete(token: String): Option[Shrt]
 }
-
-object ShrtDao {
-  private val instance = new ShrtDaoH2Impl()
-  def apply(): ShrtDao = instance
-}
