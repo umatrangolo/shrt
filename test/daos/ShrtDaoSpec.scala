@@ -13,10 +13,12 @@ import scala.collection.LinearSeq
 
 import utils.test.WithFakeDb
 
+import scaldi._
+
 @RunWith(classOf[JUnitRunner])
 class ShrtDaoSpec extends Specification {
 
-  private val dao = ShrtDao()
+  private val dao = new ShrtDaoH2Impl()
 
   "The ShrtDao" should {
     "read a Shrt from its url" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {

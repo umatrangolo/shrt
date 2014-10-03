@@ -7,14 +7,16 @@ import org.specs2.runner._
 
 import play.api.test._
 
-import utils.test.WithFakeDb
-
 import scala.collection.LinearSeq
+
+import scaldi._
+
+import utils.test.WithFakeDb
 
 @RunWith(classOf[JUnitRunner])
 class HealthcheckDaoSpec extends Specification {
 
-  private val dao = HealthcheckDao()
+  private val dao = new HealthcheckDaoH2Impl()
 
   "The Healthcheck dao" should {
     "return true iff the db is online" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/healthcheckdaospec.1.sql")) {

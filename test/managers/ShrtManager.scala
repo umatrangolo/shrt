@@ -13,6 +13,8 @@ import org.specs2.mock._
 import org.specs2.mutable._
 import org.specs2.runner._
 
+import scaldi._
+
 @RunWith(classOf[JUnitRunner])
 class ShrtManagerSpec extends Specification with Mockito {
   isolated
@@ -40,7 +42,10 @@ class ShrtManagerSpec extends Specification with Mockito {
   mockDao.delete("fcbk") returns Some(Shrt(Facebook, "fcbk"))
   mockDao.all() returns Shrt(Google, "googl") :: Shrt(Facebook, "fcbk") :: Nil
 
-  private val mngr = new ShrtManagerImpl(mockDao, mockGen) // sut
+  private val mngr = new ShrtManagerImpl()(inj = new Module {
+    bind [ShrtDao] to mockDao
+    bind [ShrtGen] to mockGen
+  }) // sut
 
   "The Shrt manager" should {
     "create a proper Shrt from a valid URL" in {
