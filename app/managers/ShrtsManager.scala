@@ -1,16 +1,18 @@
 package managers
 
+import daos._
+
 import gens._
 
 import java.net.URL
 
 import models._
 
-import scala.collection.LinearSeq
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.Logger
 
-import daos._
+import scala.collection.LinearSeq
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 import scaldi._
 
@@ -22,6 +24,7 @@ trait ShrtsManager {
 }
 
 private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsManager with Injectable {
+  private[this] val logger = Logger(this.getClass)
   private val shrtDao: ShrtDao = inject [ShrtDao]
   private val shrtGen: ShrtGen = inject [ShrtGen]
 
@@ -33,7 +36,7 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
 
   override def redirect(token: String): Option[Shrt] = {
     val shrt = shrtDao.read(token)
-    Future { shrt.foreach { s => shrtDao.inc(s.shrt) } } // async
+    Future { shrt.foreach { s => shrtDao.inc(s.shrt) } }.onFailure { case t => logger.error(s"Error while incrementing hits for ${token}", t) }
     shrt
   }
 
