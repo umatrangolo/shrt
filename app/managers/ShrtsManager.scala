@@ -7,6 +7,8 @@ import java.net.URL
 import models._
 
 import scala.collection.LinearSeq
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import daos._
 
@@ -31,7 +33,7 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
 
   override def redirect(token: String): Option[Shrt] = {
     val shrt = shrtDao.read(token)
-    shrt.foreach { s => shrtDao.inc(s.shrt) }
+    Future { shrt.foreach { s => shrtDao.inc(s.shrt) } } // async
     shrt
   }
 
