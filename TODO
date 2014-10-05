@@ -1,6 +1,6 @@
 # TODO
 
-- REST routes:
+v REST routes:
 1. API for adding a shortened URL:
    > PUT /shrts
    > body: { url: [url to shrt], proposal: [proposed token]* }
@@ -22,5 +22,10 @@
    < 200 OK
    < body: { ... all urls json encoded ...}
 
-- Store them in H2
-- Count each time a token/url is used
+v Store them in H2
+v Count each time a token/url is used
+
+- Use Lucene to index shrts
+- AngularJS based UI
+- Better analytics
+- Performance ??
