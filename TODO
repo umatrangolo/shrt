@@ -22,7 +22,7 @@ v REST routes:
    < 200 OK
    < body: { ... all urls json encoded ...}
 
-v Store them in H2
+v Store Shrts in H2
 v Count each time a token/url is used
 
 - Use Lucene to index shrts

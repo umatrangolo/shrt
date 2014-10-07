@@ -43,7 +43,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
 
   private def toJson(shrt: Shrt) = JsObject(Seq(
     "url" -> JsString(shrt.url.toString),
-    "shrt" -> JsString(shrt.shrt),
+    "shrt" -> JsString(shrt.token),
     "count" -> JsNumber(shrt.count)
   ))
 }
