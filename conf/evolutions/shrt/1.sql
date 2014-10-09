@@ -4,7 +4,7 @@
 create table shrts (
   id               bigint primary key auto_increment,
   url              varchar_ignorecase,
-  shrt             varchar_ignorecase,
+  token            varchar_ignorecase,
   count            bigint not null default 0,
   created_at       timestamp not null default now(),
   deleted_at       timestamp,

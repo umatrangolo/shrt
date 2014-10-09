@@ -1,1 +1,1 @@
-insert into shrts (url, shrt) values ('www.google.com', 'googl');
+insert into shrts (url, token) values ('www.google.com', 'googl');
