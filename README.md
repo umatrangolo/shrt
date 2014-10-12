@@ -42,11 +42,11 @@ To get a list of all known Shrts so far:
 
 The server will reply back with the list of all known Shrts like:
 
-    [{"url":"http://http://www.microsoft.com","shrt":"7RWD80","count":3},
-     {"url":"http://http://www.gilt.com","shrt":"dIqokj","count":0},
-     {"url":"http://http://www.yahoo.com","shrt":"9vsDBv","count":0},
-     {"url":"http://http://www.google.com","shrt":"QmkGT5","count":0},
-     {"url":"http://http://www.facebook.com","shrt":"vjgjol","count":0}]
+    [{"url":"http://www.microsoft.com","shrt":"7RWD80","count":3},
+     {"url":"http://www.gilt.com","shrt":"dIqokj","count":0},
+     {"url":"http://www.yahoo.com","shrt":"9vsDBv","count":0},
+     {"url":"http://www.google.com","shrt":"QmkGT5","count":0},
+     {"url":"http://www.facebook.com","shrt":"vjgjol","count":0}]
 
 ## Delete a Shrt
 
