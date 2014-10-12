@@ -2,7 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
+# UX
+GET     /shrts/search                           @controllers.Search.search
+
+# REST API
 GET     /shrts                                  @controllers.Shrts.all
 
 # TODO move to an URL using a PathBindable

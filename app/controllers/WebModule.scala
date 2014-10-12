@@ -5,4 +5,5 @@ import scaldi.Module
 class WebModule extends Module {
   binding to new Healthcheck
   binding to new Shrts
+  binding to new Search
 }
