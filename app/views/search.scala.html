@@ -1,7 +1,7 @@
 @(title: String)
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="search">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,6 +10,10 @@
 
     <!-- Bootstrap -->
     <link href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+
+    <!-- Angular.js -->
+    <script type="text/javascript" src="@routes.Assets.at("angular.min.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/search.js")"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -24,6 +28,30 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
 
-    Shrts Search UI goes here!
+    <!-- fonts -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300italic,300,100italic,100' rel='stylesheet' type='text/css'>
+
+    <!-- style sheets -->
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+
+    <header>
+      <span class="search">
+        <input id="search.input" type="search" class="search-bar" placeholder="Search here..." autofocus size="16" style="background-image: url(@routes.Assets.at("images/search.png"))"/>
+      </span>
+      <a href="https://github.com/umatrangolo/shrt">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="@routes.Assets.at("images/forkme.png")"
+             alt="Fork me on GitHub"
+             data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png">
+      </a>
+    </header>
+
+    <hr class="hr-search-bar"/>
+
+    <div ng-controller="SearchController as search">
+      <div ng-repeat="shrt in search.shrts">
+        {{ shrt }}
+      </div>
+    </div>
+
   </body>
 </html>

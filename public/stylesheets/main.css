@@ -1,0 +1,29 @@
+header {    margin-top: 12px;
+    margin-left: 8px;
+    margin-bottom: 4px;
+    margin-right: 2px;
+}
+
+input[type=search] {
+    outline: 0;
+}
+
+.search-bar {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    width: 60%;
+    height: 32px;
+    border: 0px;
+    border-radius: 3px;
+    background-color: rgba(0, 0, 0, 0.027451);
+    box-shadow: none;
+    background-repeat: no-repeat;
+    background-position: 8px 50%;
+    padding: 15px 20px 15px 28px;
+}
+
+.hr-search-bar {
+    margin-left: 8px;
+    margin-right: 129px;
+}
