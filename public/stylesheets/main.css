@@ -16,17 +16,15 @@ input[type=search] {
     width: 90%;
     height: 48px;
     border: 0px;
-    border-radius: 3px;
-    background-color: rgba(0, 0, 0, 0.027451);
     box-shadow: none;
-    background-repeat: no-repeat;
-    background-position: 8px 50%;
-    padding: 15px 20px 15px 28px;
+    padding: 4px 4px 4px 4px;
 }
 
 .hr-search-bar {
     margin-left: 8px;
     margin-right: 129px;
+    margin-top: 4px;
+    margin-bottom: 8px;
 }
 
 .shrt-count {
