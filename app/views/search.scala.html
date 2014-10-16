@@ -50,7 +50,7 @@
 
     <div ng-controller="SearchController as search">
       <div ng-repeat="shrt in search.shrts">
-        {{ shrt }}
+        <a class="shrt-url" href="{{ shrt.url }}">{{ shrt.url }}</a>
       </div>
     </div>
 

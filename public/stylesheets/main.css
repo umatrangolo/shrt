@@ -13,7 +13,7 @@ input[type=search] {
     font-family: 'Roboto', sans-serif;
     font-size: 24px;
     font-weight: 300;
-    width: 60%;
+    width: 90%;
     height: 48px;
     border: 0px;
     border-radius: 3px;
@@ -27,4 +27,20 @@ input[type=search] {
 .hr-search-bar {
     margin-left: 8px;
     margin-right: 129px;
+}
+
+.shrt-count {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    margin-left: 8px;
+}
+
+.shrt-url {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    margin-left: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 300;
 }
