@@ -55,4 +55,12 @@ trait ShrtDao {
     * @return an optional deleted Shrt if found.
     */
   def delete(token: String): Option[Shrt]
+
+  /**
+    * Returns the top-k most accessed Shrts.
+    *
+    * @param k how many Shrts to load.
+    * @return a linear seq of Shrt eventually empty.
+    */
+  def topK(k: Int): LinearSeq[Shrt]
 }

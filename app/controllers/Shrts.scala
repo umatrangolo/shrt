@@ -21,6 +21,11 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     Ok(JsArray(allShrts.map { toJson })).as("application/json")
   }
 
+  def popular(k: Int) = Action {
+    val populars = manager.mostPopular(k)
+    Ok(JsArray(populars.map { toJson })).as("application/json")
+  }
+
   def create(url: String) = Action {
     val shrt = manager.create(new URL("http://" + url)) // TODO hack: fix me!
     val json: JsValue = toJson(shrt)

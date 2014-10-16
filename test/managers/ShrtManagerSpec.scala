@@ -41,6 +41,7 @@ class ShrtManagerSpec extends Specification with Mockito {
   mockDao.read("twttr") returns None
   mockDao.delete("fcbk") returns Some(Shrt(Facebook, "fcbk"))
   mockDao.all() returns Shrt(Google, "googl") :: Shrt(Facebook, "fcbk") :: Nil
+  mockDao.topK(2) returns Shrt(Google, "googl") :: Shrt(Facebook, "fcbk") :: Nil
 
   private val mngr = new ShrtManagerImpl()(inj = new Module {
     bind [ShrtDao] to mockDao
@@ -71,6 +72,9 @@ class ShrtManagerSpec extends Specification with Mockito {
     }
     "list all shrts" in {
       mngr.listAll === Shrt(Google, "googl") :: Shrt(Facebook, "fcbk") :: Nil
+    }
+    "get the 3 most popular Shrts" in {
+      mngr.mostPopular(2) == Shrt(Google, "googl") :: Shrt(Facebook, "fcbk") :: Nil
     }
   }
 }

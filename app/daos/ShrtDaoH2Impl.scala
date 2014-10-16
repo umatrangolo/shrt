@@ -75,4 +75,11 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
       shrt
     } else None
   }
+
+  override def topK(k: Int): LinearSeq[Shrt] = DB.withConnection("shrt") { implicit conn =>
+    SQL("select id, url, token, count, created_at from shrts where is_deleted = false order by count desc")
+      .as(long("id") ~ str("url") ~ str("token") ~ long("count") *)
+      .map { case id ~ url ~ token ~ count => Shrt(new URL("http://" + url), token, count) } // TODO hack: fix me!
+      .take(k)
+  }
 }

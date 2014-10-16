@@ -64,5 +64,15 @@ class ShrtsSpec extends PlaySpecification {
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
     }
+    "return the most popular Shrts" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts/popular?k=3"))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsString(result) must contain("""[{"url":"http://http://www.google.com","shrt":"googl","count":12},{"url":"http://http://www.twitter.com","shrt":"twttr","count":10},{"url":"http://http://www.facebook.com","shrt":"fcbk","count":9}]""")
+    }
   }
 }

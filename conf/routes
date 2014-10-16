@@ -8,6 +8,8 @@ GET     /shrts/search                           @controllers.Search.search
 # REST API
 GET     /shrts                                  @controllers.Shrts.all
 
+GET     /shrts/popular                          @controllers.Shrts.popular(k: Int)
+
 # TODO move to an URL using a PathBindable
 PUT     /shrts/:url                             @controllers.Shrts.create(url: String)
 

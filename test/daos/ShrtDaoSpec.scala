@@ -40,7 +40,7 @@ class ShrtDaoSpec extends Specification {
     "save a Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       val expected = Shrt(new java.net.URL("http://www.hackernews.scom"), "y", 13)
       val id = dao.save(expected)
-      id === Some(4)
+      id === Some(5)
       dao.read("y") === Some(expected)
     }
     "inc the `count` field in a pre-existing Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
@@ -56,6 +56,19 @@ class ShrtDaoSpec extends Specification {
     }
     "return a None after trying to delete a non existent Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.delete("absent") === None
+    }
+    "return the top most accessed K Shrts if any" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
+      dao.topK(3).map { _.count } === List(12, 10, 9)
+      dao.topK(2).map { _.count } === List(12, 10)
+      dao.topK(1).map { _.count } === List(12)
+      dao.topK(0) === List.empty[Shrt]
+      dao.topK(-1) === List.empty[Shrt]
+    }
+    "return the max possible number of Shrts if there are less than K available" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
+      dao.topK(30).map { _.count } === List(12, 10, 9)
+    }
+    "return an empty linear seq of Shrts if there are no available" in new WithFakeDb(scripts = Nil) {
+      dao.topK(2) === List.empty[Shrt]
     }
   }
 }
