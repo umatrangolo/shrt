@@ -26,10 +26,15 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     Ok(JsArray(populars.map { toJson })).as("application/json")
   }
 
-  def create(url: String) = Action {
-    val shrt = manager.create(new URL("http://" + url)) // TODO hack: fix me!
-    val json: JsValue = toJson(shrt)
-    Ok(json).as("application/json")
+  def create = Action { request =>
+    request.body.asJson.map { b => (b \ "uri").as[String] } match {
+      case Some(url) => {
+        val shrt = if (url.startsWith("http")) manager.create(new URL(url)) else manager.create(new URL("http://" + url))
+        val json: JsValue = toJson(shrt)
+        Ok(json).as("application/json")
+      }
+      case None => BadRequest("Missing input!")
+    }
   }
 
   def redirect(token: String) = Action {

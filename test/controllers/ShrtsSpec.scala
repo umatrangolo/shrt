@@ -3,22 +3,33 @@ package controllers
 import play.api.test._
 import play.api.test.Helpers._
 import play.api.libs.ws._
+import play.api.libs.json._
 import utils.test._
 import scala.collection.LinearSeq
 
 class ShrtsSpec extends PlaySpecification {
 
   "The Shrts controller" should {
-    "return a 200 with a Shrt for a given URL" in new WithServerAndFakeDb(
+    "return a 200 with a Shrt for a given URL wout the protocol part" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
       port = 19000,
       scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
     )  {
-      val Some(result) = route(FakeRequest(PUT, "/shrts/www.google.com"))
+      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List("uri" -> JsString("www.google.com")))))
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
       contentAsString(result) must contain("\"url\":\"http://www.google.com\"")
       contentAsString(result) must contain("\"count\":12")
+    }
+    "return a 200 with a Shrt for a given URL that has a proper protocol" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    )  {
+      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List("uri" -> JsString("https://mail.google.com")))))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsString(result) must contain("\"url\":\"https://mail.google.com\"")
     }
     "return a 303 to the original URL for a given token" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
