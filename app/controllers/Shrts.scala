@@ -1,6 +1,6 @@
 package controllers
 
-import java.net.URL
+import java.net.{ URL, MalformedURLException }
 
 import managers._
 import models._
@@ -12,6 +12,7 @@ import play.api.mvc._
 import utils._
 
 import scaldi.{ Injectable, Injector }
+import scala.util.control.Exception._
 
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
   private val manager = inject [ShrtsManager]
@@ -27,13 +28,15 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   }
 
   def create = Action { request =>
-    request.body.asJson.map { b => (b \ "uri").as[String] } match {
+    request.body.asJson
+      .map { b => (b \ "uri").as[String] }
+      .flatMap { r => catching(classOf[MalformedURLException]).opt { new URL(r) } } match {
       case Some(url) => {
-        val shrt = if (url.startsWith("http")) manager.create(new URL(url)) else manager.create(new URL("http://" + url))
+        val shrt = manager.create(url)
         val json: JsValue = toJson(shrt)
         Ok(json).as("application/json")
       }
-      case None => BadRequest("Missing input!")
+      case None => BadRequest("Missing url!")
     }
   }
 

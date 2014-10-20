@@ -15,7 +15,7 @@ class ShrtsSpec extends PlaySpecification {
       port = 19000,
       scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
     )  {
-      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List("uri" -> JsString("www.google.com")))))
+      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List("uri" -> JsString("http://www.google.com")))))
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
       contentAsString(result) must contain("\"url\":\"http://www.google.com\"")
@@ -30,6 +30,24 @@ class ShrtsSpec extends PlaySpecification {
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
       contentAsString(result) must contain("\"url\":\"https://mail.google.com\"")
+    }
+    "return a 400 if providing an invalid URL" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    )  {
+      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List("uri" -> JsString("htp:/www.google.com")))))
+      status(result) must equalTo(BAD_REQUEST)
+      println(contentAsString(result))
+    }
+    "return a 400 if providing an URL wout protocol" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    )  {
+      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List("uri" -> JsString("www.google.com")))))
+      status(result) must equalTo(BAD_REQUEST)
+      println(contentAsString(result))
     }
     "return a 303 to the original URL for a given token" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
