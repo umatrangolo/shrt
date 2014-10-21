@@ -5,6 +5,13 @@
     this.shrts = mocks;
   });
 
+  search.directive('shrt', function() {
+    return {
+      restrict: 'E',
+      templateUrl: '/assets/angularjs/custom/shrt.html'
+    };
+  });
+
   // TODO
   // Mock data to test the UI
   var mocks = [
