@@ -17,7 +17,8 @@ libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.181",
   "org.apache.commons" % "commons-lang3" % "3.3.2",
   "org.scaldi" %% "scaldi" % "0.4",
-  "org.scaldi" %% "scaldi-play" % "0.4.1"
+  "org.scaldi" %% "scaldi-play" % "0.4.1",
+  "org.apache.lucene" % "lucene-parent" % "4.10.1"
 )
 
 instrumentSettings

@@ -15,11 +15,8 @@
   // TODO
   // Mock data to test the UI
   var mocks = [
-    {"url":"http://www.microsoft.com","shrt":"7RWD80","count":3},
-    {"url":"http://www.gilt.com","shrt":"dIqokj","count":0},
-    {"url":"http://www.yahoo.com","shrt":"9vsDBv","count":0},
-    {"url":"http://www.google.com","shrt":"QmkGT5","count":0},
-    {"url":"http://www.facebook.com","shrt":"vjgjol","count":0}
+    {url:"http://www.microsoft.com",token:"7RWD80",description:"This is Micro$oft",tags:["windows","office","excel"],count:3},
+    {url:"http://www.gilt.com",token:"dIqokj",description:"",tags:["fashion","sale"],count:0}
   ];
   // TODO
 })();
