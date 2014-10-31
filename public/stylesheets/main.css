@@ -38,14 +38,50 @@ input[type=search] {
     margin-top: 4px;
     margin-bottom: 4px;
     margin-left: 10px;
-    background-color: red;
-    width: 98%%;
+    width: 98%;
     height: 100px;
 }
 
 .shrt-url {
-    font-family: 'Roboto', sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    margin-left:6px;
+  width: 99%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  margin-left: 6px;
+  padding-top: 6px;
+}
+
+.shrt-tags {
+  font-family: sans-serif;
+  font-size: 12px;
+  height: 20px;
+  width: 99%;
+  margin-left: 6px;
+  margin-top: 2px;
+}
+
+.shrt-tag {
+  font-family: sans-serif;
+  font-size: 12px;
+  background: #EEEEEE;
+  margin-left: 2px;
+  margin-rigth: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 2px;
+  border-radius: 3px;
+}
+
+.shrt-description {
+  width: 99%;
+  font-family: helvetica;
+  font-size: 14px;
+  margin-left: 6px;
+}
+
+.shrt-count {
+  float: right;
+  margin-right: 8px;
+  font-size: 16px;
+  font-weight: bold;
 }

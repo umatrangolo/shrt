@@ -1,5 +1,14 @@
 <!DOCTYPE html>
 
 <div id="{{ shrt.token }}" class="shrt-tile">
-  <a class="shrt-url" href="{{ shrt.url }}">{{ shrt.url }}</a>
+  <div id="shrt-title" class="shrt-url">
+    <a href="{{ shrt.url }}">{{ shrt.url }}</a>
+    <span class="shrt-count">{{ shrt.count }}</span>
+  </div>
+  <div id="shrt-tags" class="shrt-tags">
+    <span class="shrt-tag">#foo</span>
+    <span class="shrt-tag">#bar</span>
+  </div>
+  <div class="shrt-description">{{ shrt.description }}</div>
+  <hr/>
 </div>
