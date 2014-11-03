@@ -21,6 +21,7 @@ input[type=search] {
 }
 
 .hr-search-bar {
+    width: 99%;
     margin-left: 8px;
     margin-right: 129px;
     margin-top: 4px;
@@ -39,7 +40,6 @@ input[type=search] {
     margin-bottom: 4px;
     margin-left: 10px;
     width: 98%;
-    height: 100px;
 }
 
 .shrt-url {
@@ -48,7 +48,7 @@ input[type=search] {
   font-size: 20px;
   font-weight: 400;
   margin-left: 6px;
-  padding-top: 6px;
+  padding-top: 0px;
 }
 
 .shrt-tags {
@@ -84,4 +84,9 @@ input[type=search] {
   margin-right: 8px;
   font-size: 16px;
   font-weight: bold;
+}
+
+.shrt-tile-hr {
+    margin-top: 4px;
+    margin-bottom: 4px;
 }

@@ -6,9 +6,8 @@
     <span class="shrt-count">{{ shrt.count }}</span>
   </div>
   <div id="shrt-tags" class="shrt-tags">
-    <span class="shrt-tag">#foo</span>
-    <span class="shrt-tag">#bar</span>
+    <span class="shrt-tag" ng-repeat="tag in shrt.tags">#{{ tag }}</span>
   </div>
   <div class="shrt-description">{{ shrt.description }}</div>
-  <hr/>
+  <hr class="shrt-tile-hr"/>
 </div>
