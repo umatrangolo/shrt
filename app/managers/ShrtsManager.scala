@@ -17,7 +17,7 @@ import scala.concurrent.Future
 import scaldi._
 
 trait ShrtsManager {
-  def create(url: URL): Shrt
+  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Shrt
   def redirect(token: String): Option[Shrt]
   def delete(token: String): Option[Shrt]
   def listAll(): LinearSeq[Shrt]
@@ -29,10 +29,11 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
   private val shrtDao: ShrtDao = inject [ShrtDao]
   private val shrtGen: ShrtGen = inject [ShrtGen]
 
-  override def create(url: URL): Shrt = shrtDao.read(url).getOrElse {
-    val shrt = shrtGen.gen(url)
-    shrtDao.save(shrt)
-    shrt
+  override def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Shrt = shrtDao.read(url).getOrElse {
+    val token = shrtGen.gen(url)
+    val newShrt = Shrt(keyword, url, token, description, tags)
+    shrtDao.save(newShrt)
+    newShrt
   }
 
   override def redirect(token: String): Option[Shrt] = {

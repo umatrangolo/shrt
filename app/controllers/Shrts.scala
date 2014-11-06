@@ -28,15 +28,19 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   }
 
   def create = Action { request =>
-    request.body.asJson
-      .map { b => (b \ "uri").as[String] }
-      .flatMap { r => catching(classOf[MalformedURLException]).opt { new URL(r) } } match {
-      case Some(url) => {
-        val shrt = manager.create(url)
-        val json: JsValue = toJson(shrt)
-        Ok(json).as("application/json")
-      }
-      case None => BadRequest("Missing url!")
+    val reqJson = request.body.asJson
+
+    (for {
+      keyword <- reqJson.map { b => (b \ "keyword").as[String] }
+      url <- reqJson.map { b => (b \ "url").as[String] }.flatMap { r => catching(classOf[MalformedURLException]).opt { new URL(r) } }
+    } yield {
+      val description = reqJson.map { b => (b \ "description").as[String] }
+// TODO      val tags: Set[String] = reqJson.flatMap { b => (b \ "tags").as[Set[String]] }
+      val shrt = manager.create(keyword, url, description)
+      val json: JsValue = toJson(shrt)
+      Ok(json).as("application/json")
+    }).getOrElse {
+      BadRequest("Missing url and/or keyword!")
     }
   }
 
@@ -55,8 +59,11 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   }
 
   private def toJson(shrt: Shrt) = JsObject(Seq(
+    "keyword" -> JsString(shrt.keyword),
     "url" -> JsString(shrt.url.toString),
-    "shrt" -> JsString(shrt.token),
+    "token" -> JsString(shrt.token),
+    // TODO description
+    "tags" -> JsArray(shrt.tags.map { JsString(_) }.toList),
     "count" -> JsNumber(shrt.count)
   ))
 }

@@ -22,13 +22,14 @@ class ShrtDaoSpec extends Specification {
 
   "The ShrtDao" should {
     "read a Shrt from its url" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
-      dao.read(new java.net.URL("http://www.google.com")) === Some(Shrt(new java.net.URL("http://www.google.com"), "googl", 12))
+      dao.read(new java.net.URL("http://www.google.com")) ===
+      Some(Shrt("Google", new java.net.URL("http://www.google.com"), "googl", Some("This is Google"), Set("foo", "bar"), 12))
     }
     "read a Shrt from its url and return None iff not found" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.read(new java.net.URL("http://www.absent.com")) === None
     }
     "read a Shrt from its token" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
-      dao.read("googl") === Some(Shrt(new java.net.URL("http://www.google.com"), "googl", 12))
+      dao.read("googl") === Some(Shrt("Google", new java.net.URL("http://www.google.com"), "googl", Some("This is Google"), Set("foo", "bar"), 12))
     }
     "read a Shrt form its token and return None iff not found" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.read("absent") === None
@@ -38,20 +39,20 @@ class ShrtDaoSpec extends Specification {
       actual.size must equalTo (3)
     }
     "save a Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
-      val expected = Shrt(new java.net.URL("http://www.hackernews.scom"), "y", 13)
+      val expected = Shrt("Hacker News", new java.net.URL("http://www.hackernews.scom"), "hwught", Some("This is bullshits!"), Set("startup", "money"), 13)
       val id = dao.save(expected)
       id === Some(5)
       dao.read("y") === Some(expected)
     }
     "inc the `count` field in a pre-existing Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.inc("fcbk") === Some(10)
-      dao.read("fcbk") === Some(Shrt(new java.net.URL("http://www.facebook.com"), "fcbk", 10))
+      dao.read("fcbk") === Some(Shrt("Facebook", new java.net.URL("http://www.facebook.com"), "fcbk", Some("This is Facebook"), count = 10))
     }
     "return None after trying to inc the `count` field of a non existent Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.inc("absent") === None
     }
     "delete a Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
-      dao.delete("fcbk") === Some(Shrt(new java.net.URL("http://www.facebook.com"), "fcbk", 9))
+      dao.delete("fcbk") === Some(Shrt("Facebook", new java.net.URL("http://www.facebook.com"), "fcbk", Some("This is Facebook"), count = 10))
       dao.read("fcbk") === None
     }
     "return a None after trying to delete a non existent Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {

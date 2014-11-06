@@ -2,10 +2,8 @@ package gens
 
 import java.net.URL
 
-import models.Shrt
-
 import play.api.Logger
-
+o
 trait ShrtGen {
-  def gen(url: URL): Shrt
+  def gen(url: URL): String
 }
