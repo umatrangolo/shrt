@@ -25,7 +25,7 @@ v REST routes:
 v Store Shrts in H2
 v Count each time a token/url is used
 
-- Use Lucene to index shrts
+- Use H2 internal search engine to index shrts
 - AngularJS based UI
 - Better analytics
 - Performance ??
