@@ -23,7 +23,7 @@ private[daos] object ShrtDaoH2Impl {
     case None => Set.empty[String]
   }
 
-  private val rowParser = long("id") ~ str("keyword") ~ str("url") ~ str("token") ~ str("description") ~ str("tags") ~ long("count")
+  private val rowParser = long("id") ~ str("keyword") ~ str("url") ~ str("token") ~ str("description") ~ str("tags") ~ long("count") 
 }
 
 private[daos] class ShrtDaoH2Impl extends ShrtDao {
@@ -33,10 +33,9 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
   override def read(url: URL): Option[Shrt] = DB.withConnection("shrt") { implicit conn =>
     SQL("select id, keyword, url, token, description, tags, count, created_at from shrts where url = {url} and is_deleted = false")
       .on('url -> url.toString)().collect {
-      case Row(id: Int, keyword: String, url: String, token: String, Some(description: String), Some(tags: String), count: Int, created_at: Long) =>
-        Shrt(id, keyword, url, token, description, decode(tags), count)
-      // TODO
+      case _ => Shrt("keyword", new java.net.URL("http://www.google.com"), "token")
     }.headOption
+
   }
 
   // TODO how to force a single result ?

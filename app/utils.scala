@@ -8,7 +8,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 object AccessLoggingFilter extends Filter {
-
   val accessLogger = Logger("access")
 
   def apply(next: (RequestHeader) => Future[Result])(request: RequestHeader): Future[Result] = {
