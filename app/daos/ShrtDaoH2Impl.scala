@@ -23,7 +23,7 @@ private[daos] object ShrtDaoH2Impl {
     case None => Set.empty[String]
   }
 
-  private val rowParser = long("id") ~ str("keyword") ~ str("url") ~ str("token") ~ str("description") ~ str("tags") ~ long("count") 
+  private val rowParser = long("id") ~ str("keyword") ~ str("url") ~ str("token") ~ get("description")(Column.columnToOption[String]) ~ get("tags")(Column.columnToOption[String]) ~ long("count")
 }
 
 private[daos] class ShrtDaoH2Impl extends ShrtDao {
@@ -32,10 +32,10 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
   // TODO how to force a single result ?
   override def read(url: URL): Option[Shrt] = DB.withConnection("shrt") { implicit conn =>
     SQL("select id, keyword, url, token, description, tags, count, created_at from shrts where url = {url} and is_deleted = false")
-      .on('url -> url.toString)().collect {
-      case _ => Shrt("keyword", new java.net.URL("http://www.google.com"), "token")
-    }.headOption
-
+      .on('url -> url.toString)
+      .as(rowParser *)
+      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, description, decode(tags), count) }
+      .headOption
   }
 
   // TODO how to force a single result ?
@@ -43,14 +43,14 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
     SQL("select id, keyword, url, token, description, tags, count, created_at from shrts where token = {token} and is_deleted = false")
       .on('token -> token)
       .as(rowParser *)
-      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, Option(description), decode(Option(tags)), count) }
+      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, description, decode(tags), count) }
       .headOption
   }
 
   override def all(): LinearSeq[Shrt] = DB.withConnection("shrt") { implicit conn =>
     SQL("select id, keyword, url, token, description, tags, count, created_at from shrts where is_deleted = false order by id desc")
       .as(rowParser *)
-      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, Option(description), decode(Option(tags)), count) }
+      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, description, decode(tags), count) }
   }
 
   override def save(shrt: Shrt): Option[Long] = DB.withConnection("shrt") { implicit conn =>
@@ -88,7 +88,7 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
   override def topK(k: Int): LinearSeq[Shrt] = DB.withConnection("shrt") { implicit conn =>
     SQL("select id, keyword, url, token, description, tags, count, created_at from shrts where is_deleted = false order by count desc")
       .as(rowParser *)
-      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, Option(description), decode(Option(tags)), count) }
+      .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, description, decode(tags), count) }
       .take(k)
   }
 }

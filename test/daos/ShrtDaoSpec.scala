@@ -42,7 +42,7 @@ class ShrtDaoSpec extends Specification {
       val expected = Shrt("Hacker News", new java.net.URL("http://www.hackernews.scom"), "hwught", Some("This is bullshits!"), Set("startup", "money"), 13)
       val id = dao.save(expected)
       id === Some(5)
-      dao.read("y") === Some(expected)
+      dao.read("hwught") === Some(expected)
     }
     "inc the `count` field in a pre-existing Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
       dao.inc("fcbk") === Some(10)
@@ -52,7 +52,7 @@ class ShrtDaoSpec extends Specification {
       dao.inc("absent") === None
     }
     "delete a Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {
-      dao.delete("fcbk") === Some(Shrt("Facebook", new java.net.URL("http://www.facebook.com"), "fcbk", Some("This is Facebook"), count = 10))
+      dao.delete("fcbk") === Some(Shrt("Facebook", new java.net.URL("http://www.facebook.com"), "fcbk", Some("This is Facebook"), count = 9))
       dao.read("fcbk") === None
     }
     "return a None after trying to delete a non existent Shrt" in new WithFakeDb(scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")) {

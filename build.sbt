@@ -16,8 +16,8 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.181",
   "org.apache.commons" % "commons-lang3" % "3.3.2",
-  "org.scaldi" %% "scaldi" % "0.4",
-  "org.scaldi" %% "scaldi-play" % "0.4.1",
+  "org.scaldi" %% "scaldi" % "0.5.3",
+  "org.scaldi" %% "scaldi-play" % "0.5.3",
   "org.apache.lucene" % "lucene-parent" % "4.10.1"
 )
 
@@ -27,9 +27,6 @@ ScoverageKeys.minimumCoverage := 70
 
 ScoverageKeys.failOnMinimumCoverage := false
 
-ScoverageKeys.highlighting := {
-  if (scalaBinaryVersion.value == "2.10") false
-  else false
-}
+ScoverageKeys.highlighting := { if (scalaBinaryVersion.value == "2.10") false else false }
 
 logLevel in test := Level.Warn
