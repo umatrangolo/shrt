@@ -3,9 +3,9 @@
 v REST routes:
 1. API for adding a shortened URL:
    > PUT /shrts
-   > body: { url: [url to shrt], proposal: [proposed token]* }
-   < 201 OK { url: [url to shrt], shrt: [shrtned url] }
-   < 403 KO { url: [url to shrt] } // proposed token (if any) is already taken
+   > body: { url: [url to shrt], keyword: [unique keyword], description: [what it is], tags: [...] }
+   < 201 OK { .. shrt .. }
+   < 403 KO { url: [url to shrt] } // keyword/url already present
 
 2. API to get a shortened URL:
    > GET /shrts/<token>
@@ -24,7 +24,9 @@ v REST routes:
 
 v Store Shrts in H2
 v Count each time a token/url is used
-
+- On sending URL wout the schema assume that it is 'http://'
++ Support for tags (then used for Search)
+! Does not save the description!
 - Use H2 internal search engine to index shrts
 - AngularJS based UI
 - Better analytics
