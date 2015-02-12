@@ -14,7 +14,14 @@ import utils._
 import scaldi.{ Injectable, Injector }
 import scala.util.control.Exception._
 
+object Shrts {
+  private val logger = Logger(this.getClass)
+}
+
+// this handles the REST API
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
+  import Shrts._
+
   private val manager = inject [ShrtsManager]
 
   def all = Action {
@@ -29,6 +36,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
 
   def create = Action { request =>
     val reqJson = request.body.asJson
+    logger.debug(s"put: $reqJson")
 
     (for {
       keyword <- reqJson.map { b => (b \ "keyword").as[String] }
@@ -38,6 +46,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
       // TODO val tags: Set[String] = reqJson.flatMap { b => (b \ "tags").as[Set[String]] }
       val shrt = manager.create(keyword, url, description)
       val json: JsValue = toJson(shrt)
+      logger.debug(s"New shrt: ${Json.prettyPrint(json)}")
       Ok(json).as("application/json")
     }).getOrElse {
       BadRequest("Missing url and/or keyword!")

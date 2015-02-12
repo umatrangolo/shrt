@@ -11,7 +11,10 @@ A REST api is provided to short and use URLs.
 
 Using Curl:
 
-    $ curl -XPUT localhost:9000/shrts/www.microsoft.com
+    $ curl -XPUT \
+      	   -H "Content-Type: application/json" \
+	   -d '{"keyword":"gilt", "url":"www.gilt.com","description":"This is GILT!"}' \
+	   http://localhost:9000/shrts
 
 This will create a Shrt from the given url and return on success:
 
