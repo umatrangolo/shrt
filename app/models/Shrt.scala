@@ -9,7 +9,7 @@ case class Shrt(
   description: Option[String] = None,
   tags: Set[String] = Set.empty[String],
   count: Long = 0) {
-  require(keyword.trim.length > 0)
-  require(token.trim.length > 0)
+  require(keyword != null && keyword.trim.size > 0)
+  require(token != null && token.trim.size > 0)
   require(count >= 0)
 }
