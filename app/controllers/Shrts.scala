@@ -10,17 +10,34 @@ import play.api.libs.json._
 import play.api.mvc._
 
 import utils._
+import jsons.Jsons._
 
 import scaldi.{ Injectable, Injector }
 import scala.util.control.Exception._
+import scala.util.Try
 
-object Shrts {
+private[controllers] object Shrts {
   private val logger = Logger(this.getClass)
+}
+
+private[controllers] object ShrtsCmds {
+  import play.api.libs.json.Reads._
+  import play.api.libs.functional.syntax._
+  import play.api.data.validation.ValidationError
+
+  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None)
+
+  implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
+    (JsPath \ "keyword").read[String](minLength[String](1)) and
+    (JsPath \ "url").read[URL] and
+    (JsPath \ "description").readNullable[String]
+  )(PostCreateShrtCmd.apply _)
 }
 
 // this handles the REST API
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
   import Shrts._
+  import ShrtsCmds._
 
   private val manager = inject [ShrtsManager]
 
@@ -35,22 +52,18 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   }
 
   def create = Action { request =>
-    val reqJson = request.body.asJson
-    logger.debug(s"put: $reqJson")
-
-    (for {
-      keyword <- reqJson.map { b => (b \ "keyword").as[String] }
-      url <- reqJson.map { b => (b \ "url").as[String] }.flatMap { r => catching(classOf[MalformedURLException]).opt { new URL(r) } }
-    } yield {
-      val description = reqJson.map { b => (b \ "description").as[String] }
-      // TODO val tags: Set[String] = reqJson.flatMap { b => (b \ "tags").as[Set[String]] }
-      val shrt = manager.create(keyword, url, description)
-      val json: JsValue = toJson(shrt)
-      logger.debug(s"New shrt: ${Json.prettyPrint(json)}")
-      Ok(json).as("application/json")
-    }).getOrElse {
-      BadRequest("Missing url and/or keyword!")
-    }
+    request.body.asJson.map { reqJson =>
+      reqJson.validate[PostCreateShrtCmd] match {
+        case s: JsSuccess[PostCreateShrtCmd] => {
+          val cmd = s.get
+          val shrt = manager.create(cmd.keyword, cmd.url, cmd.description)
+          val respJson: JsValue = toJson(shrt)
+          logger.debug(s"New shrt: ${Json.prettyPrint(respJson)}")
+          Created(respJson).as("application/json")
+        }
+        case e: JsError => BadRequest("Invalid request!")
+      }
+    }.getOrElse(BadRequest("No request body"))
   }
 
   def redirect(token: String) = Action {
