@@ -32,6 +32,17 @@ private[controllers] object ShrtsCmds {
     (JsPath \ "url").read[URL] and
     (JsPath \ "description").readNullable[String]
   )(PostCreateShrtCmd.apply _)
+
+  def jsonErrors(errs: Seq[(JsPath, Seq[ValidationError])]): JsValue = {
+    val jsonErrs: Seq[JsObject] = for {
+      err <- errs
+    } yield {
+      JsObject(
+        Seq(err._1.toString -> JsArray(err._2.map { ve => JsString(ve.message) }))
+      )
+    }
+    JsObject(Seq(("errors", JsArray(jsonErrs))))
+  }
 }
 
 // this handles the REST API
@@ -61,7 +72,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
           logger.debug(s"New shrt: ${Json.prettyPrint(respJson)}")
           Created(respJson).as("application/json")
         }
-        case e: JsError => BadRequest("Invalid request!")
+        case e: JsError => BadRequest(jsonErrors(e.errors)).as("application/json")
       }
     }.getOrElse(BadRequest("No request body"))
   }
