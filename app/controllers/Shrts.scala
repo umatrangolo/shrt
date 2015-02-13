@@ -14,7 +14,7 @@ import jsons.Jsons._
 
 import scaldi.{ Injectable, Injector }
 import scala.util.control.Exception._
-import scala.util.Try
+import scala.util.{ Try, Success, Failure }
 
 private[controllers] object Shrts {
   private val logger = Logger(this.getClass)
@@ -67,27 +67,34 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
       reqJson.validate[PostCreateShrtCmd] match {
         case s: JsSuccess[PostCreateShrtCmd] => {
           val cmd = s.get
-          val shrt = manager.create(cmd.keyword, cmd.url, cmd.description)
-          val respJson: JsValue = toJson(shrt)
-          logger.debug(s"New shrt: ${Json.prettyPrint(respJson)}")
-          Created(respJson).as("application/json")
+          manager.create(cmd.keyword, cmd.url, cmd.description) match {
+            case Success(shrt) => {
+              val respJson: JsValue = toJson(shrt)
+              logger.debug(s"New shrt: ${Json.prettyPrint(respJson)}")
+              Created(respJson).as("application/json")
+            }
+            case Failure(e) => e match {
+              case se: ShrtAlreadyExistsException => Status(409)
+              case _ => InternalServerError(e.getMessage)
+            }
+          }
         }
-        case e: JsError => BadRequest(jsonErrors(e.errors)).as("application/json")
+        case e: JsError => BadRequest(jsonErrors(e.errors)).as("application/json") // invalid JSON
       }
-    }.getOrElse(BadRequest("No request body"))
+    }.getOrElse(BadRequest("No request body")) // no body in the request
   }
 
   def redirect(token: String) = Action {
     manager.redirect(token) match {
       case Some(shrt) => Redirect(shrt.url.toString).as("application/json")
-      case None => NotFound(s"Token $token was not found")
+      case None => NotFound
     }
   }
 
   def delete(token: String) = Action {
     manager.delete(token) match {
       case Some(shrt) => Ok(toJson(shrt)).as("application/json")
-      case None => NotFound(s"Token $token was not found")
+      case None => NotFound
     }
   }
 

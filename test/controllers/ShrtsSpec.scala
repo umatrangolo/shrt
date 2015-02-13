@@ -39,6 +39,7 @@ class ShrtsSpec extends PlaySpecification {
   }
 
   "The Shrts controller" should {
+    // create
     "return a 201 with a Shrt for a given valid URL" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
       port = 19000,
@@ -57,7 +58,7 @@ class ShrtsSpec extends PlaySpecification {
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
       port = 19000,
       scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    )  {
+    ) {
       val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
         "keyword" -> JsString("google"),
         "url" -> JsString("www.google.com"),
@@ -78,24 +79,39 @@ class ShrtsSpec extends PlaySpecification {
       ))))
       status(result3) must equalTo(BAD_REQUEST)
     }
-    // "return a 303 to the original URL for a given token" in new WithServerAndFakeDb(
-    //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
-    //   port = 19000,
-    //   scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    // ) {
-    //   val Some(result) = route(FakeRequest(GET, "/shrts/fcbk"))
-    //   status(result) must equalTo(303)
-    //   contentType(result) must beSome("application/json")
-    //   header("Location", result) must beSome("http://www.facebook.com")
-    // }
-    // "return a 404 on a redirect attempt with an unkown token" in new WithServerAndFakeDb(
-    //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
-    //   port = 19000,
-    //   scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    // ) {
-    //   val Some(result) = route(FakeRequest(GET, "/shrts/absent"))
-    //   status(result) must equalTo(404)
-    // }
+    "return a 409 if trying to create a Shrt with same url" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
+        "keyword" -> JsString("google"),
+        "url" -> JsString("http://www.google.com"),
+        "description" -> JsString("This is Google [REDACTED]!")
+      ))))
+      status(result) must equalTo(409)
+    }
+
+    // redirect
+    "return a 303 to the original URL for a given token" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts/fcbk"))
+      status(result) must equalTo(303)
+      contentType(result) must beSome("application/json")
+      header("Location", result) must beSome("http://www.facebook.com")
+    }
+    "return a 404 on a redirect attempt with an unkown token" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts/absent"))
+      status(result) must equalTo(404)
+    }
+
     // "return a 200 on a delete on an existing token" in new WithServerAndFakeDb(
     //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
     //   port = 19000,

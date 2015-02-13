@@ -27,20 +27,4 @@ object Global extends WithFilters(AccessLoggingFilter) with ScaldiSupport {
     super.onStop(app)
     Logger.info("Application shutdown...")
   }
-
-  override def onError(request: RequestHeader, ex: Throwable) = {
-    Future.successful(InternalServerError(
-      views.html.error(getStackTrace(ex))
-    ))
-  }
-
-  override def onHandlerNotFound(request: RequestHeader) = {
-    Future.successful(NotFound(
-      views.html.notFound(request.path)
-    ))
-  }
-
-  override def onBadRequest(request: RequestHeader, error: String) = {
-    Future.successful(BadRequest(views.html.badRequest(error)))
-  }
 }

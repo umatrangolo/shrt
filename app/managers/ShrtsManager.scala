@@ -13,27 +13,36 @@ import play.api.Logger
 import scala.collection.LinearSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.{ Try, Success, Failure }
 
 import scaldi._
 
+import java.lang.RuntimeException
+
 trait ShrtsManager {
-  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Shrt
+  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt]
   def redirect(token: String): Option[Shrt]
   def delete(token: String): Option[Shrt]
   def listAll(): LinearSeq[Shrt]
   def mostPopular(k: Int): LinearSeq[Shrt]
 }
 
+case class ShrtAlreadyExistsException(url: URL) extends RuntimeException
+
 private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsManager with Injectable {
   private[this] val logger = Logger(this.getClass)
   private val shrtDao: ShrtDao = inject [ShrtDao]
   private val shrtGen: ShrtGen = inject [ShrtGen]
 
-  override def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Shrt = shrtDao.read(url).getOrElse {
-    val token = shrtGen.gen(url)
-    val newShrt = Shrt(keyword, url, token, description, tags)
-    shrtDao.save(newShrt)
-    newShrt
+  override def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt] = Try {
+    if (shrtDao.read(url).isDefined) {
+      throw new ShrtAlreadyExistsException(url) // trying to create a duplicate Shrt with an already existing URL
+    } else {
+      val token = shrtGen.gen(url)
+      val newShrt = Shrt(keyword, url, token, description, tags)
+      shrtDao.save(newShrt)
+      newShrt
+    }
   }
 
   override def redirect(token: String): Option[Shrt] = {
