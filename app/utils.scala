@@ -1,14 +1,15 @@
 package utils
 
+import com.google.common.base.Throwables._
+import java.net.{ URL, MalformedURLException }
 import play.api.Logger
 import play.api._
+import play.api.data.validation.ValidationError
+import play.api.libs.json._
 import play.api.mvc._
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.Try
-
-import java.net.{ URL, MalformedURLException }
 
 object Security {
   def trySanitize(content: String): Option[String] = Some(content) // TODO

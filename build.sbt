@@ -15,7 +15,7 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
   "com.h2database" % "h2" % "1.4.181",
-  "org.apache.commons" % "commons-lang3" % "3.3.2",
+  "com.google.guava" % "guava" % "18.0",
   "org.scaldi" %% "scaldi" % "0.5.3",
   "org.scaldi" %% "scaldi-play" % "0.5.3",
   "org.apache.lucene" % "lucene-parent" % "4.10.1"

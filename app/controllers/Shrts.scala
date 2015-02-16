@@ -1,20 +1,17 @@
 package controllers
 
 import java.net.{ URL, MalformedURLException }
-
+import jsons.Jsons._
 import managers._
+import models.JsonErrors._
 import models._
-
 import play.api._
 import play.api.libs.json._
 import play.api.mvc._
-
-import utils._
-import jsons.Jsons._
-
-import scaldi.{ Injectable, Injector }
 import scala.util.control.Exception._
 import scala.util.{ Try, Success, Failure }
+import scaldi.{ Injectable, Injector }
+import utils._
 
 private[controllers] object Shrts {
   private val logger = Logger(this.getClass)
@@ -23,7 +20,6 @@ private[controllers] object Shrts {
 private[controllers] object ShrtsCmds {
   import play.api.libs.json.Reads._
   import play.api.libs.functional.syntax._
-  import play.api.data.validation.ValidationError
 
   case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None)
 
@@ -32,17 +28,6 @@ private[controllers] object ShrtsCmds {
     (JsPath \ "url").read[URL] and
     (JsPath \ "description").readNullable[String]
   )(PostCreateShrtCmd.apply _)
-
-  def jsonErrors(errs: Seq[(JsPath, Seq[ValidationError])]): JsValue = {
-    val jsonErrs: Seq[JsObject] = for {
-      err <- errs
-    } yield {
-      JsObject(
-        Seq(err._1.toString -> JsArray(err._2.map { ve => JsString(ve.message) }))
-      )
-    }
-    JsObject(Seq(("errors", JsArray(jsonErrs))))
-  }
 }
 
 // this handles the REST API
@@ -62,26 +47,17 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     Ok(JsArray(populars.map { toJson })).as("application/json")
   }
 
-  def create = Action { request =>
-    request.body.asJson.map { reqJson =>
-      reqJson.validate[PostCreateShrtCmd] match {
-        case s: JsSuccess[PostCreateShrtCmd] => {
-          val cmd = s.get
-          manager.create(cmd.keyword, cmd.url, cmd.description) match {
-            case Success(shrt) => {
-              val respJson: JsValue = toJson(shrt)
-              logger.debug(s"New shrt: ${Json.prettyPrint(respJson)}")
-              Created(respJson).as("application/json")
-            }
-            case Failure(e) => e match {
-              case se: ShrtAlreadyExistsException => Status(409)
-              case _ => InternalServerError(e.getMessage)
-            }
-          }
-        }
-        case e: JsError => BadRequest(jsonErrors(e.errors)).as("application/json") // invalid JSON
+  def create = Action(parse.json) { request =>
+    Json.fromJson[PostCreateShrtCmd](request.body) match {
+      case s: JsSuccess[PostCreateShrtCmd] => {
+        val cmd = s.get
+        val shrt = manager.create(cmd.keyword, cmd.url, cmd.description)
+        val resp: JsValue = toJson(shrt) // TODO write a Writes[Shrt]
+        logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")
+        Created(resp).as("application/json")
       }
-    }.getOrElse(BadRequest("No request body")) // no body in the request
+      case e: JsError => BadRequest(Json.toJson(InvalidJsonError(e.errors))).as("application/json")
+    }
   }
 
   def redirect(token: String) = Action {
