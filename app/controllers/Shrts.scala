@@ -48,15 +48,19 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   }
 
   def create = Action(parse.json) { request =>
-    Json.fromJson[PostCreateShrtCmd](request.body) match {
+    request.body.validate[PostCreateShrtCmd] match {
       case s: JsSuccess[PostCreateShrtCmd] => {
         val cmd = s.get
-        val shrt = manager.create(cmd.keyword, cmd.url, cmd.description)
-        val resp: JsValue = toJson(shrt) // TODO write a Writes[Shrt]
-        logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")
-        Created(resp).as("application/json")
+        manager.create(cmd.keyword, cmd.url, cmd.description) match {
+          case Success(shrt) => {
+            val resp: JsValue = toJson(shrt) // TODO write a Writes[Shrt]
+            logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")
+            Created(resp).as("application/json")
+          }
+          case Failure(e) => Status(409)(Json.toJson(ClientError(s"Shrt with url [${cmd.url}] already exists")))
+        }
       }
-      case e: JsError => BadRequest(Json.toJson(InvalidJsonError(e.errors))).as("application/json")
+      case e: JsError => BadRequest(Json.toJson(e.errors)).as("application/json")
     }
   }
 

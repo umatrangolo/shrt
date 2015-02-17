@@ -48,7 +48,7 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
   }
 
   override def all(): LinearSeq[Shrt] = DB.withConnection("shrt") { implicit conn =>
-    SQL("select id, keyword, url, token, description, tagz, count, created_at from shrts where is_deleted = false order by id desc")
+    SQL("select id, keyword, url, token, description, tags, count, created_at from shrts where is_deleted = false order by id desc")
       .as(rowParser *)
       .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, description, decode(tags), count) }
   }

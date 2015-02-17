@@ -20,7 +20,7 @@ import scaldi._
 import java.lang.RuntimeException
 
 trait ShrtsManager {
-  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Shrt
+  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt]
   def redirect(token: String): Option[Shrt]
   def delete(token: String): Option[Shrt]
   def listAll(): LinearSeq[Shrt]
@@ -34,7 +34,7 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
   private val shrtDao: ShrtDao = inject [ShrtDao]
   private val shrtGen: ShrtGen = inject [ShrtGen]
 
-  override def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Shrt =
+  override def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt] = Try {
     if (shrtDao.read(url).isDefined) {
       throw new ShrtAlreadyExistsException(url) // trying to create a duplicate Shrt with an already existing URL
     } else {
@@ -43,7 +43,7 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
       shrtDao.save(newShrt)
       newShrt
     }
-
+  }
 
   override def redirect(token: String): Option[Shrt] = {
     val shrt = shrtDao.read(token)
