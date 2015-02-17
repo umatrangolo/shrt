@@ -2,17 +2,13 @@ package managers
 
 import daos._
 import gens._
-
 import java.net.URL
-
 import models._
-
 import org.junit.runner._
-
 import org.specs2.mock._
 import org.specs2.mutable._
 import org.specs2.runner._
-
+import scala.util.{ Try, Success, Failure }
 import scaldi._
 
 @RunWith(classOf[JUnitRunner])
@@ -48,12 +44,12 @@ class ShrtManagerSpec extends Specification with Mockito {
 
   "The Shrt manager" should {
     "create a proper Shrt from a valid URL" in {
-      mngr.create("Twitter", Twitter) === Shrt("Twitter", Twitter, "twttr", count = 0)
+      mngr.create("Twitter", Twitter) === Success(Shrt("Twitter", Twitter, "twttr", count = 0))
       there was one(mockDao).read(Twitter)
       there was one(mockDao).save(Shrt("Twitter", Twitter, "twttr", count = 0))
     }
-    "return an already created Shrt if the target URL was already seen" in {
-      mngr.create("Google", Google) === Shrt("Google", Google, "googl", count = 0)
+    "return a Failure if the target URL was already seen" in {
+      mngr.create("Google", Google).isFailure === true
       there was one(mockDao).read(Google)
       there was no(mockDao).save(any[Shrt])
     }

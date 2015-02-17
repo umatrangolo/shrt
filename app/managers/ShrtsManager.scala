@@ -1,23 +1,16 @@
 package managers
 
 import daos._
-
 import gens._
-
+import java.lang.RuntimeException
 import java.net.URL
-
 import models._
-
 import play.api.Logger
-
 import scala.collection.LinearSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{ Try, Success, Failure }
-
 import scaldi._
-
-import java.lang.RuntimeException
 
 trait ShrtsManager {
   def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt]
