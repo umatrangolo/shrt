@@ -112,41 +112,41 @@ class ShrtsSpec extends PlaySpecification {
       status(result) must equalTo(404)
     }
 
-    // "return a 200 on a delete on an existing token" in new WithServerAndFakeDb(
-    //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
-    //   port = 19000,
-    //   scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    // ) {
-    //   val Some(result) = route(FakeRequest(DELETE, "/shrts/fcbk"))
-    //   status(result) must equalTo(OK)
-    //   contentType(result) must beSome("application/json")
-    // }
-    // "return a 404 on a delete for an unknown token" in new WithServerAndFakeDb(
-    //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
-    //   port = 19000,
-    //   scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    // ) {
-    //   val Some(result) = route(FakeRequest(DELETE, "/shrts/absent"))
-    //   status(result) must equalTo(404)
-    // }
-    // "return a 200 for a list of all the known tokens" in new WithServerAndFakeDb(
-    //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
-    //   port = 19000,
-    //   scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    // ) {
-    //   val Some(result) = route(FakeRequest(GET, "/shrts"))
-    //   status(result) must equalTo(OK)
-    //   contentType(result) must beSome("application/json")
-    // }
-    // "return the most popular Shrts" in new WithServerAndFakeDb(
-    //   app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
-    //   port = 19000,
-    //   scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
-    // ) {
-    //   val Some(result) = route(FakeRequest(GET, "/shrts/popular?k=3"))
-    //   status(result) must equalTo(OK)
-    //   contentType(result) must beSome("application/json")
-    //   contentAsString(result) must contain("""[{"keyword":"Google","url":"http://www.google.com","token":"googl","tags":["foo","bar"],"count":12},{"keyword":"Twitter","url":"http://www.twitter.com","token":"twttr","tags":["foo","bar"],"count":10},{"keyword":"Facebook","url":"http://www.facebook.com","token":"fcbk","tags":[],"count":9}]""")
-    // }
+    "return a 200 on a delete on an existing token" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(DELETE, "/shrts/fcbk"))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+    }
+    "return a 404 on a delete for an unknown token" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(DELETE, "/shrts/absent"))
+      status(result) must equalTo(404)
+    }
+    "return a 200 for a list of all the known tokens" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts"))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+    }
+    "return the most popular Shrts" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts/popular?k=3"))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsString(result) must contain("""[{"keyword":"Google","url":"http://www.google.com","token":"googl","description":"This is Google","tags":["foo","bar"],"count":12},{"keyword":"Twitter","url":"http://www.twitter.com","token":"twttr","description":"","tags":["foo","bar"],"count":10},{"keyword":"Facebook","url":"http://www.facebook.com","token":"fcbk","description":"This is Facebook","tags":[],"count":9}]""")
+    }
   }
 }
