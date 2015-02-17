@@ -48,7 +48,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     Ok(JsArray(populars.map { Json.toJson(_) })).as("application/json")
   }
 
-  def create = Action(parse.json) { request =>
+  def create = Action(parse.json) { implicit request =>
     request.body.validate[PostCreateShrtCmd] match {
       case s: JsSuccess[PostCreateShrtCmd] => {
         val cmd = s.get
@@ -56,7 +56,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
           case Success(shrt) => {
             val resp: JsValue = Json.toJson(shrt)
             logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")
-            Created(resp).as("application/json")
+            Created(resp).as("application/json").withHeaders(LOCATION -> routes.Shrts.redirect(shrt.token).absoluteURL(false))
           }
           case Failure(e) => Status(409)(Json.toJson(ClientError(s"Shrt with url [${cmd.url}] already exists")))
         }

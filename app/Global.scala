@@ -28,14 +28,17 @@ object Global extends WithFilters(AccessLoggingFilter) with ScaldiSupport {
     Logger.info("Application shutdown...")
   }
 
+  // this will catch all the unexepcted errors (server error --> 5xx)
   override def onError(request: RequestHeader, ex: Throwable): Future[Result] = Future.successful {
     InternalServerError(Json.toJson(ServerError(getRootCause(ex).getMessage())))
   }
 
+  // when asked for a resource that is not present
   override def onHandlerNotFound(request: RequestHeader): Future[Result] = Future.successful {
     NotFound(Json.toJson(ClientError("Not Found")))
   }
 
+  // invalid input (client error --> 4xx)
   override def onBadRequest(request: RequestHeader, error: String): Future[Result] = Future.successful {
     BadRequest(Json.toJson(ClientError("Bad Request", Seq(error))))
   }
