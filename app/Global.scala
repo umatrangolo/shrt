@@ -1,9 +1,9 @@
 import com.google.common.base.Throwables._
+import controllers.JsonErrors._
 import controllers._
 import daos._
 import gens._
 import managers._
-import models.JsonErrors._
 import models._
 import play.api.GlobalSettings
 import play.api._

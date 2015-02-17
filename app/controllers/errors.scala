@@ -1,4 +1,4 @@
-package models
+package controllers
 
 import play.api.libs.json._
 import play.api.data.validation._

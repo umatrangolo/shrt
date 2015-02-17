@@ -1,34 +1,16 @@
 package controllers
 
-import java.net.{ URL, MalformedURLException }
-import jsons.Jsons._
+import JsonErrors._
 import managers._
-import models.JsonErrors._
 import models._
-import models.Shrt._
 import play.api._
 import play.api.libs.json._
 import play.api.mvc._
-import scala.util.control.Exception._
 import scala.util.{ Try, Success, Failure }
 import scaldi.{ Injectable, Injector }
-import utils._
 
 private[controllers] object Shrts {
   private val logger = Logger(this.getClass)
-}
-
-private[controllers] object ShrtsCmds {
-  import play.api.libs.json.Reads._
-  import play.api.libs.functional.syntax._
-
-  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None)
-
-  implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
-    (JsPath \ "keyword").read[String](minLength[String](1)) and
-    (JsPath \ "url").read[URL] and
-    (JsPath \ "description").readNullable[String]
-  )(PostCreateShrtCmd.apply _)
 }
 
 // this handles the REST API
