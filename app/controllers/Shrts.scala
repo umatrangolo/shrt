@@ -5,6 +5,7 @@ import jsons.Jsons._
 import managers._
 import models.JsonErrors._
 import models._
+import models.Shrt._
 import play.api._
 import play.api.libs.json._
 import play.api.mvc._
@@ -39,12 +40,12 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
 
   def all = Action {
     val allShrts = manager.listAll()
-    Ok(JsArray(allShrts.map { toJson })).as("application/json")
+    Ok(JsArray(allShrts.map { Json.toJson(_) })).as("application/json")
   }
 
   def popular(k: Int) = Action {
     val populars = manager.mostPopular(k)
-    Ok(JsArray(populars.map { toJson })).as("application/json")
+    Ok(JsArray(populars.map { Json.toJson(_) })).as("application/json")
   }
 
   def create = Action(parse.json) { request =>
@@ -53,7 +54,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
         val cmd = s.get
         manager.create(cmd.keyword, cmd.url, cmd.description) match {
           case Success(shrt) => {
-            val resp: JsValue = toJson(shrt) // TODO write a Writes[Shrt]
+            val resp: JsValue = Json.toJson(shrt)
             logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")
             Created(resp).as("application/json")
           }
@@ -73,17 +74,8 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
 
   def delete(token: String) = Action {
     manager.delete(token) match {
-      case Some(shrt) => Ok(toJson(shrt)).as("application/json")
+      case Some(shrt) => Ok(Json.toJson(shrt)).as("application/json")
       case None => NotFound
     }
   }
-
-  private def toJson(shrt: Shrt) = JsObject(Seq(
-    "keyword" -> JsString(shrt.keyword),
-    "url" -> JsString(shrt.url.toString),
-    "token" -> JsString(shrt.token),
-    // TODO description
-    "tags" -> JsArray(shrt.tags.map { JsString(_) }.toList),
-    "count" -> JsNumber(shrt.count)
-  ))
 }
