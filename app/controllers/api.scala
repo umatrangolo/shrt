@@ -8,11 +8,12 @@ import java.net.URL
 import jsons.Jsons._
 
 object ShrtsCmds {
-  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None)
+  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String])
 
   implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
     (JsPath \ "keyword").read[String](minLength[String](1)) and
     (JsPath \ "url").read[URL] and
-    (JsPath \ "description").readNullable[String]
+    (JsPath \ "description").readNullable[String] and
+    (JsPath \ "tags").readNullable[Set[String]].map { _.getOrElse(Set.empty[String]) }
   )(PostCreateShrtCmd.apply _)
 }

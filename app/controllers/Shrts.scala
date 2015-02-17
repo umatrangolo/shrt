@@ -34,7 +34,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     request.body.validate[PostCreateShrtCmd] match {
       case s: JsSuccess[PostCreateShrtCmd] => {
         val cmd = s.get
-        manager.create(cmd.keyword, cmd.url, cmd.description) match {
+        manager.create(cmd.keyword, cmd.url, cmd.description, cmd.tags) match {
           case Success(shrt) => {
             val resp: JsValue = Json.toJson(shrt)
             logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")

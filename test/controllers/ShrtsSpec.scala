@@ -14,9 +14,9 @@ class ShrtsSpec extends PlaySpecification {
     import ShrtsCmds._
 
     "parse a valid request" in {
-      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "This is a test!"}""")
+      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "This is a test!", "tags": ["foo", "bar"]}""")
       val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
-      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some("This is a test!")))
+      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some("This is a test!"), Set("foo", "bar")))
     }
     "fail to parse a PUT request if no keyword" in {
       val req = Json.parse("""{"url": "http://www.google.com", "description": "This is a test!"}""")
@@ -28,13 +28,24 @@ class ShrtsSpec extends PlaySpecification {
       val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
       actual.isError === true
     }
-    "parse a PUT with wout a description" in {
-      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": ""}""")
-      val req2 = Json.parse("""{"keyword": "google", "url": "http://www.google.com" }""")
+    "parse a PUT with and wout a description" in {
+      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "", "tags": []}""")
+      val req2 = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "tags": [] }""")
       val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
       val actual2: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req2)
-      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some("")))
-      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None))
+      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some(""), Set()))
+      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set()))
+    }
+    "parse a PUT with and wout tags" in {
+      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "", "tags": ["foo", "bar"]}""")
+      val req2 = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "tags": [] }""")
+      val req3 = Json.parse("""{"keyword": "google", "url": "http://www.google.com" }""")
+      val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
+      val actual2: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req2)
+      val actual3: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req3)
+      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some(""), Set("foo", "bar")))
+      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set()))
+      actual3 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set()))
     }
   }
 
@@ -48,7 +59,8 @@ class ShrtsSpec extends PlaySpecification {
       val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
         "keyword" -> JsString("gmail"),
         "url" -> JsString("https://mail.google.com"),
-        "description" -> JsString("This is Gmail")
+        "description" -> JsString("This is Gmail"),
+        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar"), JsString("baz")))
       ))))
       status(result) must equalTo(201)
       contentType(result) must beSome("application/json")
@@ -62,20 +74,23 @@ class ShrtsSpec extends PlaySpecification {
       val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
         "keyword" -> JsString("google"),
         "url" -> JsString("www.google.com"),
-        "description" -> JsString("This is Google!")
+        "description" -> JsString("This is Google!"),
+        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar"), JsString("baz")))
       ))))
       status(result) must equalTo(BAD_REQUEST)
 
       val Some(result2) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
         "keyword" -> JsString("google"),
         "url" -> JsString(""),
-        "description" -> JsString("This is Google!")
+        "description" -> JsString("This is Google!"),
+        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar"), JsString("baz")))
       ))))
       status(result2) must equalTo(BAD_REQUEST)
 
       val Some(result3) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
         "keyword" -> JsString("google"),
-        "description" -> JsString("This is Google!")
+        "description" -> JsString("This is Google!"),
+        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar"), JsString("baz")))
       ))))
       status(result3) must equalTo(BAD_REQUEST)
     }
@@ -87,7 +102,8 @@ class ShrtsSpec extends PlaySpecification {
       val Some(result) = route(FakeRequest(PUT, "/shrts").withJsonBody(JsObject(List(
         "keyword" -> JsString("google"),
         "url" -> JsString("http://www.google.com"),
-        "description" -> JsString("This is Google [REDACTED]!")
+        "description" -> JsString("This is Google [REDACTED]!"),
+        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar")))
       ))))
       status(result) must equalTo(409)
     }
@@ -112,6 +128,7 @@ class ShrtsSpec extends PlaySpecification {
       status(result) must equalTo(404)
     }
 
+    // delete
     "return a 200 on a delete on an existing token" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
       port = 19000,
@@ -129,6 +146,8 @@ class ShrtsSpec extends PlaySpecification {
       val Some(result) = route(FakeRequest(DELETE, "/shrts/absent"))
       status(result) must equalTo(404)
     }
+
+    // all
     "return a 200 for a list of all the known tokens" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
       port = 19000,
@@ -138,6 +157,8 @@ class ShrtsSpec extends PlaySpecification {
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
     }
+
+    // populars
     "return the most popular Shrts" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
       port = 19000,
