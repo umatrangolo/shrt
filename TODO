@@ -24,9 +24,9 @@ v REST routes:
 
 v Store Shrts in H2
 v Count each time a token/url is used
-- On sending URL wout the schema assume that it is 'http://'
-+ Support for tags (then used for Search)
-! Does not save the description!
+v On sending URL wout the schema assume that it is 'http://'
+v Support for tags (then used for Search)
+v Does not save the description!
 - Use H2 internal search engine to index shrts
 - AngularJS based UI
 - Better analytics
