@@ -1,23 +1,16 @@
 package daos
 
 import models.Shrt
-
 import org.junit.runner._
-
 import org.specs2.mutable._
 import org.specs2.runner._
-
 import play.api.test._
-
 import scala.collection.LinearSeq
-
-import utils.test.WithFakeDb
-
 import scaldi._
+import utils.test.WithFakeDb
 
 @RunWith(classOf[JUnitRunner])
 class ShrtDaoSpec extends Specification {
-
   private val dao = new ShrtDaoH2Impl()
 
   "The ShrtDao" should {
