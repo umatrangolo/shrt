@@ -60,11 +60,13 @@ class ShrtsSpec extends PlaySpecification {
         "keyword" -> JsString("gmail"),
         "url" -> JsString("https://mail.google.com"),
         "description" -> JsString("This is Gmail"),
-        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar"), JsString("baz")))
+        "tags" -> JsArray(Seq(JsString("foo"), JsString("bar"), JsString("baz"))),
+        "token" -> JsString("gmil123")
       ))))
       status(result) must equalTo(201)
       contentType(result) must beSome("application/json")
       contentAsString(result) must contain("\"url\":\"https://mail.google.com\"")
+      contentAsString(result) must contain("\"token\":\"gmil123\"")
     }
     "return a 400 if providing an invalid URL or an empty one and/or no URL at all" in new WithServerAndFakeDb(
       app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),

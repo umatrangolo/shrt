@@ -32,13 +32,13 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
     url: URL,
     description: Option[String] = None,
     tags: Set[String] = Set.empty[String],
-    token: Option[String] = None
+    proposedToken: Option[String] = None
   ): Try[Shrt] = Try {
 
-    def validate() = !shrtDao.read(url).isDefined && !(token.map { shrtDao.read(_).isDefined }.getOrElse(false))
+    def validate() = !shrtDao.read(url).isDefined && !(proposedToken.map { shrtDao.read(_).isDefined }.getOrElse(false))
 
     if (validate()) {
-      val token = shrtGen.gen(url)
+      val token = proposedToken.getOrElse(shrtGen.gen(url))
       val newShrt = Shrt(keyword, url, token, description, tags)
       shrtDao.save(newShrt)
       newShrt
