@@ -53,6 +53,11 @@ class ShrtManagerSpec extends Specification with Mockito {
       there was one(mockDao).read(Google)
       there was no(mockDao).save(any[Shrt])
     }
+    "return a Failure if the proposed token is already taken" in {
+      mngr.create("Google", Google, Some("This is Google new!"), Set("foo", "bar"), Some("googl")).isFailure === true
+      there was one(mockDao).read(Google)
+      there was no(mockDao).save(any[Shrt])
+    }
     "correctly redirect to the original URL starting from the input token" in {
       mngr.redirect("fcbk") === Some(Shrt("Facebook", Facebook, "fcbk", count = 0))
       there was one(mockDao).inc("fcbk")

@@ -34,7 +34,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     request.body.validate[PostCreateShrtCmd] match {
       case s: JsSuccess[PostCreateShrtCmd] => {
         val cmd = s.get
-        manager.create(cmd.keyword, cmd.url, cmd.description, cmd.tags) match {
+        manager.create(cmd.keyword, cmd.url, cmd.description, cmd.tags, cmd.token) match {
           case Success(shrt) => {
             val resp: JsValue = Json.toJson(shrt)
             logger.debug(s"New shrt: ${Json.prettyPrint(resp)}")
@@ -69,12 +69,13 @@ import java.net.URL
 import jsons.Jsons._
 
 object ShrtsCmds {
-  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String])
+  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String], token: Option[String])
 
   implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
     (JsPath \ "keyword").read[String](minLength[String](1)) and
     (JsPath \ "url").read[URL] and
     (JsPath \ "description").readNullable[String] and
-    (JsPath \ "tags").readNullable[Set[String]].map { _.getOrElse(Set.empty[String]) }
+    (JsPath \ "tags").readNullable[Set[String]].map { _.getOrElse(Set.empty[String]) } and
+    (JsPath \ "token").readNullable[String]
   )(PostCreateShrtCmd.apply _)
 }

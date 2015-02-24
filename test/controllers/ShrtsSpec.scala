@@ -14,9 +14,9 @@ class ShrtsSpec extends PlaySpecification {
     import ShrtsCmds._
 
     "parse a valid request" in {
-      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "This is a test!", "tags": ["foo", "bar"]}""")
+      val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "This is a test!", "tags": ["foo", "bar"], "token": "baz"}""")
       val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
-      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some("This is a test!"), Set("foo", "bar")))
+      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some("This is a test!"), Set("foo", "bar"), Some("baz")))
     }
     "fail to parse a PUT request if no keyword" in {
       val req = Json.parse("""{"url": "http://www.google.com", "description": "This is a test!"}""")
@@ -33,8 +33,8 @@ class ShrtsSpec extends PlaySpecification {
       val req2 = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "tags": [] }""")
       val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
       val actual2: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req2)
-      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some(""), Set()))
-      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set()))
+      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some(""), Set(), None))
+      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set(), None))
     }
     "parse a PUT with and wout tags" in {
       val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "", "tags": ["foo", "bar"]}""")
@@ -43,9 +43,9 @@ class ShrtsSpec extends PlaySpecification {
       val actual: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req)
       val actual2: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req2)
       val actual3: JsResult[PostCreateShrtCmd] = PostCreateShrtCmdReads.reads(req3)
-      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some(""), Set("foo", "bar")))
-      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set()))
-      actual3 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set()))
+      actual === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), Some(""), Set("foo", "bar"), None))
+      actual2 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set(), None))
+      actual3 === JsSuccess(PostCreateShrtCmd("google", new URL("http://www.google.com"), None, Set(), None))
     }
   }
 

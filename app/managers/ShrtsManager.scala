@@ -13,7 +13,7 @@ import scala.util.{ Try, Success, Failure }
 import scaldi._
 
 trait ShrtsManager {
-  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt]
+  def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String], token: Option[String] = None): Try[Shrt]
   def redirect(token: String): Option[Shrt]
   def delete(token: String): Option[Shrt]
   def listAll(): LinearSeq[Shrt]
@@ -27,14 +27,23 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
   private val shrtDao: ShrtDao = inject [ShrtDao]
   private val shrtGen: ShrtGen = inject [ShrtGen]
 
-  override def create(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String]): Try[Shrt] = Try {
-    if (shrtDao.read(url).isDefined) {
-      throw new ShrtAlreadyExistsException(url) // trying to create a duplicate Shrt with an already existing URL
-    } else {
+  override def create(
+    keyword: String,
+    url: URL,
+    description: Option[String] = None,
+    tags: Set[String] = Set.empty[String],
+    token: Option[String] = None
+  ): Try[Shrt] = Try {
+
+    def validate() = !shrtDao.read(url).isDefined && !(token.map { shrtDao.read(_).isDefined }.getOrElse(false))
+
+    if (validate()) {
       val token = shrtGen.gen(url)
       val newShrt = Shrt(keyword, url, token, description, tags)
       shrtDao.save(newShrt)
       newShrt
+    } else {
+      throw new ShrtAlreadyExistsException(url) // trying to create a duplicate Shrt with an already existing URL/token
     }
   }
 
