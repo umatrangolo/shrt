@@ -10,8 +10,8 @@ import java.net.URL
 
 class ShrtsSpec extends PlaySpecification {
 
-  "The ShrtsCmds when decoding a PUT request " should {
-    import ShrtsCmds._
+  "The ShrtsApis when decoding a PUT request " should {
+    import ShrtsApis._
 
     "parse a valid request" in {
       val req = Json.parse("""{"keyword": "google", "url": "http://www.google.com", "description": "This is a test!", "tags": ["foo", "bar"], "token": "baz"}""")
@@ -169,7 +169,7 @@ class ShrtsSpec extends PlaySpecification {
       val Some(result) = route(FakeRequest(GET, "/shrts/popular?k=3"))
       status(result) must equalTo(OK)
       contentType(result) must beSome("application/json")
-      contentAsString(result) must contain("""[{"keyword":"Google","url":"http://www.google.com","token":"googl","description":"This is Google","tags":["foo","bar"],"count":12},{"keyword":"Twitter","url":"http://www.twitter.com","token":"twttr","description":"","tags":["foo","bar"],"count":10},{"keyword":"Facebook","url":"http://www.facebook.com","token":"fcbk","description":"This is Facebook","tags":[],"count":9}]""")
+      contentAsString(result) must contain("""[{"shrt":{"keyword":"Google","url":"http://www.google.com","token":"googl","description":"This is Google","tags":["foo","bar"],"count":12},"redirect":"http:/shrts/googl"},{"shrt":{"keyword":"Twitter","url":"http://www.twitter.com","token":"twttr","description":"","tags":["foo","bar"],"count":10},"redirect":"http:/shrts/twttr"},{"shrt":{"keyword":"Facebook","url":"http://www.facebook.com","token":"fcbk","description":"This is Facebook","tags":[],"count":9},"redirect":"http:/shrts/fcbk"}]""")
     }
   }
 }

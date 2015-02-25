@@ -1,33 +1,66 @@
 package controllers
 
 import JsonErrors._
+import java.net.URL
+import jsons.Jsons._
 import managers._
 import models._
 import play.api._
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Reads._
 import play.api.libs.json._
 import play.api.mvc._
 import scala.util.{ Try, Success, Failure }
 import scaldi.{ Injectable, Injector }
 
+object ShrtsApis {
+  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String], token: Option[String])
+  case class ShrtHateoas(shrt: Shrt, redirect: URL)
+
+  implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
+    (JsPath \ "keyword").read[String](minLength[String](1)) and
+    (JsPath \ "url").read[URL] and
+    (JsPath \ "description").readNullable[String] and
+    (JsPath \ "tags").readNullable[Set[String]].map { _.getOrElse(Set.empty[String]) } and
+    (JsPath \ "token").readNullable[String]
+  )(PostCreateShrtCmd.apply _)
+
+  implicit val ShrtHateoasWrites = new Writes[ShrtHateoas] {
+    override def writes(shrtHateoas: ShrtHateoas): JsValue = JsObject(Seq(
+      "shrt" -> Json.toJson(shrtHateoas.shrt),
+      "redirect" -> JsString(shrtHateoas.redirect.toString)
+    ))
+  }
+}
+
 private[controllers] object Shrts {
   private val logger = Logger(this.getClass)
 }
 
-// this handles the REST API
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
   import Shrts._
-  import ShrtsCmds._
+  import ShrtsApis._
 
   private val manager = inject [ShrtsManager]
 
-  def all = Action {
+  def all = Action { implicit request =>
     val allShrts = manager.listAll()
-    Ok(JsArray(allShrts.map { Json.toJson(_) })).as("application/json")
+    Ok(JsArray(allShrts.map { shrt =>
+      Json.toJson(ShrtHateoas(
+        shrt,
+        new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))
+      ))
+    })).as("application/json")
   }
 
-  def popular(k: Int) = Action {
+  def popular(k: Int) = Action { implicit request =>
     val populars = manager.mostPopular(k)
-    Ok(JsArray(populars.map { Json.toJson(_) })).as("application/json")
+    Ok(JsArray(populars.map { shrt =>
+      Json.toJson(ShrtHateoas(
+        shrt,
+        new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))
+      ))
+    })).as("application/json")
   }
 
   def create = Action(parse.json) { implicit request =>
@@ -60,22 +93,4 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
       case None => NotFound
     }
   }
-}
-
-// API objects
-import play.api.libs.json.Reads._
-import play.api.libs.functional.syntax._
-import java.net.URL
-import jsons.Jsons._
-
-object ShrtsCmds {
-  case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String], token: Option[String])
-
-  implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
-    (JsPath \ "keyword").read[String](minLength[String](1)) and
-    (JsPath \ "url").read[URL] and
-    (JsPath \ "description").readNullable[String] and
-    (JsPath \ "tags").readNullable[Set[String]].map { _.getOrElse(Set.empty[String]) } and
-    (JsPath \ "token").readNullable[String]
-  )(PostCreateShrtCmd.apply _)
 }
