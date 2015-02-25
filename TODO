@@ -1,27 +1,12 @@
 # TODO
 
 v REST routes:
-1. API for adding a shortened URL:
-   > PUT /shrts
-   > body: { url: [url to shrt], keyword: [unique keyword], description: [what it is], tags: [...], token: [proposed token] }
-   < 201 OK { .. shrt .. }
-   < 403 KO { url: [url to shrt] } // keyword/url/token already present
-
-2. API to get a shortened URL:
-   > GET /shrts/<token>
-   < 301 to [original url]
-   < 404 // if no url for given token
-
-3. API for deleting a shrt url
-   > DELETE /shrts/<token>
-   < 200 OK
-   < 404 // if no url for given token
-
-4. API for listing all the shrt urls
-   > GET /shrts
-   < 200 OK
-   < body: { ... all urls json encoded ...}
-
+v API for adding a shortened URL:
+v API to get a shortened URL:
+v API for deleting a shrt url
+v API for listing all the shrt urls
+v API for getting the most popualr shorts
+v Some HATEOAS
 v Store Shrts in H2
 v Count each time a token/url is used
 v On sending URL wout the schema assume that it is 'http://'
