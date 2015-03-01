@@ -1,9 +1,7 @@
 package daos
 
-import models.Shrt
-
 import java.net.URL
-
+import models.Shrt
 import scala.collection.LinearSeq
 
 trait ShrtDao {

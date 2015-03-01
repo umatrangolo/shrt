@@ -13,5 +13,4 @@ class Search(implicit inj: Injector) extends Controller with Injectable {
   def search = Action {
     Ok(views.html.search("Shrts"))
   }
-
 }

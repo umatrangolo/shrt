@@ -1,13 +1,10 @@
 package controllers
 
+import daos.HealthcheckDao
 import play.api._
 import play.api.mvc._
-
-import daos.HealthcheckDao
-
-import utils._
-
 import scaldi.{ Injectable, Injector }
+import utils._
 
 class Healthcheck(implicit jnj: Injector) extends Controller with Injectable {
   private val healthcheckDao = inject [HealthcheckDao]

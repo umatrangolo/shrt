@@ -3,6 +3,6 @@ package daos
 import scaldi.Module
 
 class DaosModule extends Module {
-  bind[ShrtDao] to new ShrtDaoH2Impl
-  bind[HealthcheckDao] to new HealthcheckDaoH2Impl
+  bind[ShrtDao] toNonLazy new ShrtDaoH2Impl
+  bind[HealthcheckDao] toNonLazy new HealthcheckDaoH2Impl
 }

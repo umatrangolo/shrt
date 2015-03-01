@@ -1,21 +1,15 @@
 package daos
 
-import anorm._
 import anorm.SqlParser._
-
+import anorm._
+import java.net.URL
 import models.Shrt
-
 import play.api.Logger
 import play.api.Play.current
 import play.api.db._
-
-import java.net.URL
-
 import scala.collection.LinearSeq
 
 private[daos] object ShrtDaoH2Impl {
-  val log = Logger(this.getClass)
-
   def encode(tags: Set[String]): String = tags.mkString("#")
 
   def decode(encoded: Option[String]): Set[String] = encoded.map { _.split("#") } match {
@@ -23,10 +17,12 @@ private[daos] object ShrtDaoH2Impl {
     case None => Set.empty[String]
   }
 
-  private val rowParser = long("id") ~ str("keyword") ~ str("url") ~ str("token") ~ get("description")(Column.columnToOption[String]) ~ get("tags")(Column.columnToOption[String]) ~ long("count")
+  private val rowParser =
+    long("id") ~ str("keyword") ~ str("url") ~ str("token") ~ get("description")(Column.columnToOption[String]) ~ get("tags")(Column.columnToOption[String]) ~ long("count")
 }
 
 private[daos] class ShrtDaoH2Impl extends ShrtDao {
+  private[this] val log = Logger(this.getClass)
   import ShrtDaoH2Impl._
 
   // TODO how to force a single result ?

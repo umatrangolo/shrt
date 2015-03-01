@@ -33,14 +33,10 @@ object ShrtsApis {
   }
 }
 
-private[controllers] object Shrts {
-  private val logger = Logger(this.getClass)
-}
-
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
-  import Shrts._
   import ShrtsApis._
 
+  private[this] val logger = Logger(this.getClass)
   private val manager = inject [ShrtsManager]
 
   def all = Action { implicit request =>
