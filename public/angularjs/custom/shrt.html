@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 
-<div id="{{ shrt.token }}" class="shrt-tile">
+<div id="{{ shrt.shrt.token }}" class="shrt-tile">
   <div id="shrt-title" class="shrt-keyword">
-    <a href="{{ shrt.url }}">{{ shrt.keyword }}</a>
-    <span class="shrt-count">{{ shrt.count }}</span>
+    <a href="{{ shrt.shrt.url }}">{{ shrt.shrt.keyword }}</a>
+    <span class="shrt-count">{{ shrt.shrt.count }}</span>
   </div>
   <div id="shrt-tags" class="shrt-tags">
     <span class="shrt-tag" ng-repeat="tag in shrt.tags">#{{ tag }}</span>
   </div>
-  <div class="shrt-description">{{ shrt.description }}</div>
+  <div class="shrt-description">{{ shrt.shrt.description }}</div>
   <hr class="shrt-tile-hr"/>
 </div>
