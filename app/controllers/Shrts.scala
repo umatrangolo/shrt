@@ -16,7 +16,6 @@ import scaldi.{ Injectable, Injector }
 object ShrtsApis {
   case class PostCreateShrtCmd(keyword: String, url: URL, description: Option[String] = None, tags: Set[String] = Set.empty[String], token: Option[String])
   case class ShrtHateoas(shrt: Shrt, redirect: URL)
-  case class All(shrts: Traversable[Shrt])
 
   implicit val PostCreateShrtCmdReads: Reads[PostCreateShrtCmd] = (
     (JsPath \ "keyword").read[String](minLength[String](1)) and
@@ -32,12 +31,6 @@ object ShrtsApis {
       "redirect" -> JsString(shrtHateoas.redirect.toString)
     ))
   }
-
-  implicit val AllWrites = new Writes[Seq[ShrtHateoas]] {
-    override def writes(allShrts: Seq[ShrtHateoas]): JsValue = JsObject(Seq(
-      "all" -> JsArray(allShrts.map { Json.toJson(_) })
-    ))
-  }
 }
 
 class Shrts(implicit inj: Injector) extends Controller with Injectable {
@@ -47,13 +40,23 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   private val manager = inject [ShrtsManager]
 
   def all = Action { implicit request =>
-    val allShrts = manager.listAll().map { shrt => ShrtHateoas(shrt, new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))) }
-    Ok(Json.toJson(allShrts)).as("application/json")
+    val allShrts = manager.listAll()
+    Ok(JsArray(allShrts.map { shrt =>
+      Json.toJson(ShrtHateoas(
+        shrt,
+        new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))
+      ))
+    })).as("application/json")
   }
 
   def popular(k: Int) = Action { implicit request =>
-    val populars = manager.mostPopular(k).map { shrt => ShrtHateoas(shrt, new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))) }
-    Ok(Json.toJson(populars)).as("application/json")
+    val populars = manager.mostPopular(k)
+    Ok(JsArray(populars.map { shrt =>
+      Json.toJson(ShrtHateoas(
+        shrt,
+        new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))
+      ))
+    })).as("application/json")
   }
 
   def create = Action(parse.json) { implicit request =>
