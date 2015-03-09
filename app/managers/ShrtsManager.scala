@@ -18,6 +18,7 @@ trait ShrtsManager {
   def delete(token: String): Option[Shrt]
   def listAll(): LinearSeq[Shrt]
   def mostPopular(k: Int): LinearSeq[Shrt]
+  def search(q: String): LinearSeq[Shrt]
 }
 
 case class ShrtAlreadyExistsException(url: URL) extends RuntimeException
@@ -56,4 +57,5 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
   override def delete(token: String): Option[Shrt] = shrtDao.delete(token)
   override def listAll(): LinearSeq[Shrt] = shrtDao.all()
   override def mostPopular(k: Int): LinearSeq[Shrt] = shrtDao.topK(k)
+  override def search(q: String): LinearSeq[Shrt] = shrtDao.search(q)
 }

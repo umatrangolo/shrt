@@ -61,4 +61,12 @@ trait ShrtDao {
     * @return a linear seq of Shrt eventually empty.
     */
   def topK(k: Int): LinearSeq[Shrt]
+
+  /**
+    * Searches for matching Shrts.
+    *
+    * @param q the query to execute.
+    * @return a linear seq of all the matching Shrt(s).
+    */
+  def search(q: String): LinearSeq[Shrt]
 }

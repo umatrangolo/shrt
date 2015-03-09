@@ -39,9 +39,9 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   private[this] val logger = Logger(this.getClass)
   private val manager = inject [ShrtsManager]
 
-  def all = Action { implicit request =>
-    val allShrts = manager.listAll()
-    Ok(JsArray(allShrts.map { shrt =>
+  def popular(k: Int) = Action { implicit request =>
+    val populars = manager.mostPopular(k)
+    Ok(JsArray(populars.map { shrt =>
       Json.toJson(ShrtHateoas(
         shrt,
         new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))
@@ -49,9 +49,9 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     })).as("application/json")
   }
 
-  def popular(k: Int) = Action { implicit request =>
-    val populars = manager.mostPopular(k)
-    Ok(JsArray(populars.map { shrt =>
+  def search(query: Option[String] = None) = Action { implicit request =>
+    val matches = if (query.isEmpty || query.get.trim.isEmpty) { manager.listAll() } else { manager.search(query.get) }
+    Ok(JsArray(matches.map { shrt =>
       Json.toJson(ShrtHateoas(
         shrt,
         new URL(routes.Shrts.redirect(shrt.token).absoluteURL(false))

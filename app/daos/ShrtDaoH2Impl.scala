@@ -87,4 +87,7 @@ private[daos] class ShrtDaoH2Impl extends ShrtDao {
       .map { case id ~ keyword ~ url ~ token ~ description ~ tags ~ count => Shrt(keyword, new URL(url), token, description, decode(tags), count) }
       .take(k)
   }
+
+  // TODO
+  def search(q: String): LinearSeq[Shrt] = LinearSeq.empty[Shrt]
 }

@@ -6,7 +6,7 @@
 GET     /shrts/search                           @controllers.Search.search
 
 # REST API
-GET     /shrts                                  @controllers.Shrts.all
+GET     /shrts                                  @controllers.Shrts.search(q: Option[String])
 
 GET     /shrts/popular                          @controllers.Shrts.popular(k: Int)
 
