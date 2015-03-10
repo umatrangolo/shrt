@@ -18,7 +18,9 @@ libraryDependencies ++= Seq(
   "com.google.guava" % "guava" % "18.0",
   "org.scaldi" %% "scaldi" % "0.5.3",
   "org.scaldi" %% "scaldi-play" % "0.5.3",
-  "org.apache.lucene" % "lucene-parent" % "4.10.1"
+  "org.apache.lucene" % "lucene-core" % "5.0.0",
+  "org.apache.lucene" % "lucene-queryparser" % "5.0.0",
+  "org.apache.lucene" % "lucene-analyzers-common" % "5.0.0"
 )
 
 instrumentSettings

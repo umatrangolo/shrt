@@ -38,6 +38,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
 
   private[this] val logger = Logger(this.getClass)
   private val manager = inject [ShrtsManager]
+  private val searchManager = inject [SearchManager]
 
   def popular(k: Int) = Action { implicit request =>
     val populars = manager.mostPopular(k)
@@ -50,7 +51,7 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
   }
 
   def search(query: Option[String] = None) = Action { implicit request =>
-    val matches = if (query.isEmpty || query.get.trim.isEmpty) { manager.listAll() } else { manager.search(query.get) }
+    val matches = if (query.isEmpty || query.get.trim.isEmpty) { manager.listAll() } else { searchManager.search(query.get) }
     Ok(JsArray(matches.map { shrt =>
       Json.toJson(ShrtHateoas(
         shrt,
