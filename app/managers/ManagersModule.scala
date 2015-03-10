@@ -10,5 +10,5 @@ class ManagersModule extends Module {
 
   bind [Directory] toNonLazy new RAMDirectory()
   bind [Analyzer] toNonLazy new StandardAnalyzer()
-  bind [SearchManager] toNonLazy new SearchManagerLuceneImpl() initWith { _.init() }
+  bind [SearchManager] toNonLazy new SearchManagerLuceneImpl()
 }
