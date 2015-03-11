@@ -14,6 +14,7 @@ import scaldi._
 
 trait SearchManager {
   def search(q: String): LinearSeq[Shrt]
+  def index(shrt: Shrt)
 }
 
 private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends SearchManager with Injectable {
@@ -23,7 +24,7 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
   private[this] val directory = inject[Directory]
   private[this] val analyzer = inject[Analyzer]
 
-  private[this] val indexSearcher = indexAll(shrtDao)
+  private[this] var indexSearcher = indexAll(shrtDao)
 
   // Load all Shrt(s) and index them all
   private[managers] def indexAll(shrtDao: ShrtDao): IndexSearcher = {
@@ -31,16 +32,27 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
 
     shrtDao.all().map { shrt =>
       log.debug(s"Indexing $shrt ...")
-      val doc = new Document()
-      doc.add(new Field("keyword", shrt.keyword, TextField.TYPE_STORED))
-      shrt.description.foreach { d => doc.add(new Field("description", d, TextField.TYPE_STORED)) }
-      shrt.tags.foreach { t => doc.add(new Field("tag", t, TextField.TYPE_NOT_STORED)) }
-      indexWriter.addDocument(doc)
+      indexWriter.addDocument(docFrom(shrt))
     }
-
     indexWriter.close()
 
     new IndexSearcher(DirectoryReader.open(directory))
+  }
+
+  private[managers] def docFrom(shrt: Shrt): Document = {
+    val doc = new Document()
+    val text: List[String] = shrt.keyword :: shrt.description.getOrElse("") :: shrt.tags.toList
+
+    doc.add(new Field("text", text.mkString(" "), TextField.TYPE_NOT_STORED))
+    doc.add(new Field("keyword", shrt.keyword, TextField.TYPE_STORED))
+    doc
+  }
+
+  override def index(shrt: Shrt) = {
+    val indexWriter = new IndexWriter(directory, new IndexWriterConfig(analyzer))
+    indexWriter.addDocument(docFrom(shrt))
+    indexWriter.close()
+    indexSearcher = new IndexSearcher(DirectoryReader.open(directory)) // make the latest doc visible
   }
 
   override def search(q: String): LinearSeq[Shrt] = {

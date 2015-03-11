@@ -10,6 +10,7 @@ import scala.collection.LinearSeq
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{ Try, Success, Failure }
+import scala.util.control.Exception._
 import scaldi._
 
 trait ShrtsManager {
@@ -27,6 +28,7 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
   private[this] val logger = Logger(this.getClass)
   private val shrtDao: ShrtDao = inject [ShrtDao]
   private val shrtGen: ShrtGen = inject [ShrtGen]
+  private val searchManager = inject [SearchManager]
 
   override def create(
     keyword: String,
@@ -41,8 +43,16 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
     if (validate()) {
       val token = proposedToken.getOrElse(shrtGen.gen(url))
       val newShrt = Shrt(keyword, url, token, description, tags)
-      shrtDao.save(newShrt)
-      newShrt
+      try {
+        shrtDao.save(newShrt)
+        searchManager.index(newShrt)
+        newShrt
+      } catch {
+        case ex: Exception => {
+          ignoring(classOf[Exception]) { shrtDao.delete(newShrt.token) } // try to rollback on the db
+          throw ex
+        }
+      }
     } else {
       throw new ShrtAlreadyExistsException(url) // trying to create a duplicate Shrt with an already existing URL/token
     }
