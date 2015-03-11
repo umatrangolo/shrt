@@ -19,3 +19,4 @@ v Use H2 internal search engine to index shrts
 + AngularJS based UI
 + Better analytics
 + Performance ??
++ Get rid of the DB and use Lucene index for everything
