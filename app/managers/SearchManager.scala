@@ -58,7 +58,7 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
   override def search(q: String): LinearSeq[Shrt] = {
     log.debug(s"Searching for $q ...")
 
-    val queryParser = new QueryParser("keyword", analyzer)
+    val queryParser = new QueryParser("text", analyzer)
     val query = queryParser.parse(q)
 
     val hits = indexSearcher.search(query, null, 1000).scoreDocs
