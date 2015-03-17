@@ -5,7 +5,7 @@ import models.Shrt
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.document.{ Field, TextField, Document }
 import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig, DirectoryReader }
-import org.apache.lucene.search.IndexSearcher
+import org.apache.lucene.search.{ IndexSearcher, TopDocs }
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.store.Directory
 import play.api.Logger
@@ -24,7 +24,7 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
   private[this] val directory = inject[Directory]
   private[this] val analyzer = inject[Analyzer]
 
-  private[this] var indexSearcher = indexAll(shrtDao)
+  @volatile private[this] var indexSearcher = indexAll(shrtDao)
 
   // Load all Shrt(s) and index them all
   private[managers] def indexAll(shrtDao: ShrtDao): IndexSearcher = {
@@ -44,7 +44,7 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
     val text: List[String] = shrt.keyword :: shrt.description.getOrElse("") :: shrt.tags.toList
 
     doc.add(new Field("text", text.mkString(" "), TextField.TYPE_NOT_STORED))
-    doc.add(new Field("keyword", shrt.keyword, TextField.TYPE_STORED))
+    doc.add(new Field("token", shrt.token, TextField.TYPE_STORED))
     doc
   }
 
@@ -61,14 +61,14 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
     val queryParser = new QueryParser("text", analyzer)
     val query = queryParser.parse(q)
 
-    val hits = indexSearcher.search(query, null, 1000).scoreDocs
-    if (hits.length == 0) { log.info(s"No hits for $query") } else {
-      log.info(s"Found ${hits.length} hits for $query")
-      hits.map { hit =>
-        log.debug(s"hit: $hit")
-      }
+    val hits: TopDocs = indexSearcher.search(query, null, 1000)
+    if (hits.totalHits == 0) {
+      log.info(s"No hits for $query")
+      LinearSeq.empty[Shrt]
+    } else {
+      val matches = hits.scoreDocs.map { hit => indexSearcher.doc(hit.doc).get("token") }.flatMap { keyword => shrtDao.read(keyword) }
+      log.info(s"""Found ${hits.totalHits} hits for query: $query. Matches are:\n${matches.mkString("\n")}""")
+      matches.toList
     }
-
-    LinearSeq.empty[Shrt] // TODO
   }
 }
