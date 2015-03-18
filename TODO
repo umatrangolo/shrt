@@ -20,5 +20,5 @@ v Use Lucene to index Shrt(s)
 + Better analytics
 + Performance ??
 + Get rid of the DB and use Lucene index for everything
-+ Shrt directive does not show tags
+v Shrt directive does not show tags
 + Better shrt directive with the analytics on the left
