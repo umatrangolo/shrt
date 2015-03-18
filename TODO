@@ -13,10 +13,12 @@ v On sending URL wout the schema assume that it is 'http://'
 v Support for tags (then used for Search)
 v Does not save the description!
 v Make it possible to propose the token the Shrt has to be saved with
-v Use H2 internal search engine to index shrts
+x Use H2 internal search engine to index shrts
   H2 full text search does not support wildcard search (e.g. q='goo' does not match 'google')
-+ Use Lucene to index Shrt(s)
+v Use Lucene to index Shrt(s)
 + AngularJS based UI
 + Better analytics
 + Performance ??
 + Get rid of the DB and use Lucene index for everything
++ Shrt directive does not show tags
++ Better shrt directive with the analytics on the left
