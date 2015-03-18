@@ -17,6 +17,7 @@ class ShrtManagerSpec extends Specification with Mockito {
 
   private val mockDao = mock[ShrtDao]
   private val mockGen = mock[ShrtGen]
+  private val mockSearchManger = mock[SearchManager]
 
   private val Google = new URL("http://www.google.com")
   private val Facebook = new URL("http://www.facebook.com")
@@ -40,6 +41,7 @@ class ShrtManagerSpec extends Specification with Mockito {
   private val mngr = new ShrtManagerImpl()(inj = new Module {
     bind [ShrtDao] to mockDao
     bind [ShrtGen] to mockGen
+    bind [SearchManager] to mockSearchManger
   }) // sut
 
   "The Shrt manager" should {
