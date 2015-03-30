@@ -138,6 +138,3 @@ To soft-delete a Shrt using Curl:
     $ curl -XDELETE localhost:9000/shrts/3bgYVQ
     {"keyword":"hn","url":"http://www.h2n.com","token":"3bgYVQ","description":"This is Hacker News!","tags":[""],"count":2}
 ```
-
-ugo.matrangolo@gmail.com
-Dublin

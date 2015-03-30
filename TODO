@@ -16,6 +16,7 @@ v Make it possible to propose the token the Shrt has to be saved with
 x Use H2 internal search engine to index shrts
   H2 full text search does not support wildcard search (e.g. q='goo' does not match 'google')
 v Use Lucene to index Shrt(s)
+@ Use Lucene Lookup module to provide auto-completion
 + AngularJS based UI
 + Better analytics
 + Performance ??
