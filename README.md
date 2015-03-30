@@ -1,13 +1,12 @@
-shrt
-====
+# shrt
 
 URL shortener + analytics + search
 
-# Api
+## Api
 
 A REST api is provided to shorten and use URLs.
 
-## Create a Shrt
+### Create a Shrt
 
 Using Curl to create a Shrt for Wikipedia:
 
@@ -84,7 +83,7 @@ stored with:
 Proper HTTP error code will be returned if there is another Shrt
 colliding on the same token (209) or for invalid input (400).
 
-## Use a Shrt
+### Use a Shrt
 
 Given a previously created Shrt we can redirect to it as in:
 
@@ -109,7 +108,7 @@ Given a previously created Shrt we can redirect to it as in:
 Doing this from a browser rather then Curl will redirect you
 automatically on the original page.
 
-## List
+### List
 
 To get a list of all known Shrts so far:
 
@@ -119,7 +118,7 @@ To get a list of all known Shrts so far:
      {"keyword":"wikipedia","url":"http://www.wikipedia.org","token":"F0q4ab","description":"Wikipedia","tags":[""],"count":1}]
 ```
 
-## Most popular Shrts:
+### Most popular Shrts:
 
 To get the top k most popular Shrts:
 
@@ -131,7 +130,7 @@ To get the top k most popular Shrts:
 
 ```
 
-## Delete a Shrt
+### Delete a Shrt
 
 To soft-delete a Shrt using Curl:
 
@@ -140,5 +139,5 @@ To soft-delete a Shrt using Curl:
     {"keyword":"hn","url":"http://www.h2n.com","token":"3bgYVQ","description":"This is Hacker News!","tags":[""],"count":2}
 ```
 
--- ugo.matrangolo@gmail.com
--- Dublin
+ugo.matrangolo@gmail.com
+Dublin
