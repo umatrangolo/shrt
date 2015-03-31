@@ -8,6 +8,8 @@ GET     /shrts/search                           @controllers.Search.search
 # REST API
 GET     /shrts                                  @controllers.Shrts.search(q: Option[String])
 
+GET     /shrts/completions                      @controllers.Shrts.lookup(q: Option[String])
+
 GET     /shrts/popular                          @controllers.Shrts.popular(k: Int)
 
 # TODO move to an URL using a PathBindable
