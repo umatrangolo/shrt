@@ -192,5 +192,28 @@ class ShrtsSpec extends PlaySpecification {
       contentType(result) must beSome("application/json")
       contentAsString(result) must contain("""[{"shrt":{"keyword":"Twitter","url":"http://www.twitter.com","token":"twttr","description":"","tags":["foo","bar"],"count":10},"redirect":"http:/shrts/twttr"},{"shrt":{"keyword":"Google","url":"http://www.google.com","token":"googl","description":"This is Google","tags":["foo","bar"],"count":12},"redirect":"http:/shrts/googl"}]""")
     }
+
+    // lookup
+    "return a 200 with all possible completions for the given input" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts/completions?q=fa"))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsString(result) must contain("""["facebook"]""")
+    }
+
+    "returns a 200 with no results if no completions are possible" in new WithServerAndFakeDb(
+      app = FakeApplication(additionalConfiguration = Helpers.inMemoryDatabase(name = "shrt")),
+      port = 19000,
+      scripts = LinearSeq("test/resources/sql/shrtdaospec.1.sql")
+    ) {
+      val Some(result) = route(FakeRequest(GET, "/shrts/completions?q=z"))
+      status(result) must equalTo(OK)
+      contentType(result) must beSome("application/json")
+      contentAsString(result) must contain("""[]""")
+    }
   }
 }

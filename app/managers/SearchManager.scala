@@ -5,15 +5,20 @@ import models.Shrt
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.document.{ Field, TextField, Document }
 import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig, DirectoryReader }
-import org.apache.lucene.search.{ IndexSearcher, TopDocs }
 import org.apache.lucene.queryparser.classic.QueryParser
+import org.apache.lucene.search.spell.LuceneDictionary
+import org.apache.lucene.search.suggest.Lookup
+import org.apache.lucene.search.suggest.fst.FSTCompletionLookup
+import org.apache.lucene.search.{ IndexSearcher, TopDocs }
 import org.apache.lucene.store.Directory
 import play.api.Logger
+import scala.collection.JavaConverters._
 import scala.collection.LinearSeq
 import scaldi._
 
 trait SearchManager {
   def search(q: String): LinearSeq[Shrt]
+  def lookup(q: String): LinearSeq[String]
   def index(shrt: Shrt)
 }
 
@@ -24,10 +29,10 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
   private[this] val directory = inject[Directory]
   private[this] val analyzer = inject[Analyzer]
 
-  @volatile private[this] var indexSearcher = indexAll(shrtDao)
+  @volatile private[this] var (indexSearcher, completions) = indexAll(shrtDao)
 
   // Load all Shrt(s) and index them all
-  private[managers] def indexAll(shrtDao: ShrtDao): IndexSearcher = {
+  private[managers] def indexAll(shrtDao: ShrtDao): (IndexSearcher, Lookup) = {
     val indexWriter = new IndexWriter(directory, new IndexWriterConfig(analyzer))
 
     shrtDao.all().map { shrt =>
@@ -36,7 +41,15 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
     }
     indexWriter.close()
 
-    new IndexSearcher(DirectoryReader.open(directory))
+    val directoryReader = DirectoryReader.open(directory)
+    val dict = new LuceneDictionary(directoryReader, "text")
+    val completionLookup = {
+      val lookup = new FSTCompletionLookup()
+      lookup.build(dict)
+      lookup
+    }
+
+    (new IndexSearcher(directoryReader), completionLookup)
   }
 
   private[managers] def docFrom(shrt: Shrt): Document = {
@@ -52,7 +65,17 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
     val indexWriter = new IndexWriter(directory, new IndexWriterConfig(analyzer))
     indexWriter.addDocument(docFrom(shrt))
     indexWriter.close()
-    indexSearcher = new IndexSearcher(DirectoryReader.open(directory)) // make the latest doc visible
+    val directoryReader = DirectoryReader.open(directory)
+    val dict = new LuceneDictionary(directoryReader, "text")
+    val lookup = {
+      val lookup = new FSTCompletionLookup()
+      lookup.build(dict)
+      lookup
+    }
+
+    // make the latest doc visible
+    indexSearcher = new IndexSearcher(directoryReader)
+    completions = lookup
   }
 
   override def search(q: String): LinearSeq[Shrt] = {
@@ -70,5 +93,9 @@ private[managers] class SearchManagerLuceneImpl(implicit inj: Injector) extends 
       log.info(s"""Found ${hits.totalHits} hits for query: $query. Matches are:\n${matches.mkString("\n")}""")
       matches.toList
     }
+  }
+
+  override def lookup(q: String): LinearSeq[String] = {
+    completions.lookup(q, true, 6).asScala.map { c => c.key.toString }.toList
   }
 }

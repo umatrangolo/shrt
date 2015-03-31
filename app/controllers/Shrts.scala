@@ -60,6 +60,11 @@ class Shrts(implicit inj: Injector) extends Controller with Injectable {
     })).as("application/json")
   }
 
+  def lookup(query: Option[String] = None) = Action { implicit request =>
+    val completions = if (query.isEmpty || query.get.trim.isEmpty) { Seq.empty[String] } else { searchManager.lookup(query.get) }
+    Ok(JsArray(completions.map { JsString(_) })).as("application/json")
+  }
+
   def create = Action(parse.json) { implicit request =>
     request.body.validate[PostCreateShrtCmd] match {
       case s: JsSuccess[PostCreateShrtCmd] => {
