@@ -60,7 +60,7 @@ private[managers] class ShrtManagerImpl(implicit inj: Injector) extends ShrtsMan
 
   override def redirect(token: String): Option[Shrt] = {
     val shrt = shrtDao.read(token)
-    Future { shrt.foreach { s => shrtDao.inc(s.token) } }.onFailure { case t => logger.error(s"Error while incrementing hits for ${token}", t) }
+    shrt.foreach { s => shrtDao.inc(s.token) }
     shrt
   }
 
