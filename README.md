@@ -1,6 +1,6 @@
 # shrt
 
-URL shortener + analytics + search
+Simple URL shortener + search.
 
 ## Api
 
