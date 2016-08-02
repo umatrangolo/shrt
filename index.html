@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Shrt by umatrangolo</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Shrt</h1>
+        <p>URL shortener + analytics + search</p>
+
+        <p class="view"><a href="https://github.com/umatrangolo/shrt">View the Project on GitHub <small>umatrangolo/shrt</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/umatrangolo/shrt/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/umatrangolo/shrt/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/umatrangolo/shrt">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="shrt-----------------------------------------------------------------------------------------------------------------------------------------------------------571966" class="anchor" href="#shrt-----------------------------------------------------------------------------------------------------------------------------------------------------------571966" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>shrt                                                                                                                                                           [57/1966]</h1>
+
+<p>Simple URL shortener + search.</p>
+
+<h2>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Api</h2>
+
+<p>A REST api is provided to shorten and use URLs.</p>
+
+<h3>
+<a id="create-a-shrt" class="anchor" href="#create-a-shrt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Create a Shrt</h3>
+
+<p>Using Curl to create a Shrt for Wikipedia:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl -v \
+-XPUT \
+-H <span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+-d <span class="pl-s"><span class="pl-pds">'</span>{"keyword":"wikipedia", "url":"http://www.wikipedia.org","description":"Wikipedia", "tags":["wikipedia","truth"]}<span class="pl-pds">'</span></span> \
+http://localhost:9000/shrts</pre></div>
+
+<p>will return the json of the created Shrt:</p>
+
+<div class="highlight highlight-source-json"><pre>   {
+     <span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>wikipedia<span class="pl-pds">"</span></span>,
+     <span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://www.wikipedia.org<span class="pl-pds">"</span></span>,
+     <span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>F0q4ab<span class="pl-pds">"</span></span>,
+     <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Wikipedia<span class="pl-pds">"</span></span>,
+     <span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span>wikipedia<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>truth<span class="pl-pds">"</span></span>],
+     <span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">0</span>
+   }</pre></div>
+
+<p>The 'token' field is to be used to ask for the redirect. The URL to
+use to get the redirect is proposed in the Location header of the HTTP
+response. The passed tags will be used to search for Shrts from the
+Search UI.</p>
+
+<p>It is also possible to propose a token for the being created Shrt:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl -v \
+-XPUT \
+-H <span class="pl-s"><span class="pl-pds">"</span>Content-Type: application/json<span class="pl-pds">"</span></span> \
+-d <span class="pl-s"><span class="pl-pds">'</span>{"keyword":"stackoverflow", "url":"http://stackoverflow.com","description":"Q&amp;A site", "token":"qa"}<span class="pl-pds">'</span></span> \
+http://localhost:9000/shrts</pre></div>
+
+<p>Again the response is the Shrt json:</p>
+
+<div class="highlight highlight-source-json"><pre>    {
+      <span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>stackoverflow<span class="pl-pds">"</span></span>,
+      <span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://stackoverflow.com<span class="pl-pds">"</span></span>,
+      <span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>qa<span class="pl-pds">"</span></span>,
+      <span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Q&amp;A site<span class="pl-pds">"</span></span>,
+      <span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[],
+      <span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">0</span>
+    }</pre></div>
+
+<p>Proper HTTP error codes will be returned if there is another Shrt
+colliding on the same token (209) or for invalid input (400).</p>
+
+<h3>
+<a id="use-a-shrt" class="anchor" href="#use-a-shrt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Use a Shrt</h3>
+
+<p>Given a previously created Shrt we can redirect to it as in:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl -v -XGET http://localhost:9000/shrts/F0q4ab
+<span class="pl-k">*</span> Hostname was NOT found <span class="pl-k">in</span> DNS cache
+<span class="pl-k">*</span>   Trying ::1...
+<span class="pl-k">*</span> Connected to localhost (::1) port 9000 (#0)
+<span class="pl-k">&gt;</span> GET /shrts/F0q4ab HTTP/1.1
+<span class="pl-k">&gt;</span> User-Agent: curl/7.37.1
+<span class="pl-k">&gt;</span> Host: localhost:9000
+<span class="pl-k">&gt;</span> Accept: <span class="pl-k">*</span>/<span class="pl-k">*</span>
+<span class="pl-k">&gt;</span>
+<span class="pl-k">&lt;</span> HTTP/1.1 303 See Other
+<span class="pl-k">&lt;</span> Content-Type: application/json
+<span class="pl-k">&lt;</span> Location: http://www.wikipedia.org
+<span class="pl-k">&lt;</span> Content-Length: 0
+<span class="pl-k">&lt;</span>
+<span class="pl-k">*</span> Connection <span class="pl-c">#0 to host localhost left intact</span></pre></div>
+
+<p>Doing this from a browser rather then Curl will redirect you
+automatically on the original page.</p>
+
+<p>This will also inc the counter associated with the shrt.</p>
+
+<h3>
+<a id="list" class="anchor" href="#list" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>List</h3>
+
+<p>To get a list of all known Shrts so far:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl -XGET localhost:9000/shrts</pre></div>
+
+<p>returns:</p>
+
+<div class="highlight highlight-source-json"><pre>[
+{<span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>stackoverflow<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://stackoverflow.com<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>qa<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Q&amp;A site<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>],<span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">0</span>},
+{<span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>wikipedia<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://www.wikipedia.org<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>F0q4ab<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>Wikipedia<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>],<span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">1</span>}
+]</pre></div>
+
+<h3>
+<a id="most-popular-shrts" class="anchor" href="#most-popular-shrts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Most popular Shrts:</h3>
+
+<p>To get the top k most popular Shrts:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl -XGET localhost:9000/shrts/popular<span class="pl-k">?</span>k=3</pre></div>
+
+<p>that is</p>
+
+<div class="highlight highlight-source-json"><pre>[
+{<span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>hn<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://www.h2n.com<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>3bgYVQ<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>This is Hacker News!<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>],<span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">2</span>},
+{<span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>facebook<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://www.facebook.com<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>14Nx9S<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>This is Facebook!<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>],<span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">1</span>},
+{<span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>gilt4<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://www.gilt6.com<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>wYrLYh<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>This is GILT!<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>],<span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">1</span>}
+]</pre></div>
+
+<h3>
+<a id="delete-a-shrt" class="anchor" href="#delete-a-shrt" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Delete a Shrt</h3>
+
+<p>To soft-delete a Shrt using Curl:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ curl -XDELETE localhost:9000/shrts/3bgYVQ</pre></div>
+
+<p>that will give back:</p>
+
+<div class="highlight highlight-source-json"><pre>{<span class="pl-s"><span class="pl-pds">"</span>keyword<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>hn<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>http://www.h2n.com<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>token<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>3bgYVQ<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>description<span class="pl-pds">"</span></span>:<span class="pl-s"><span class="pl-pds">"</span>This is Hacker News!<span class="pl-pds">"</span></span>,<span class="pl-s"><span class="pl-pds">"</span>tags<span class="pl-pds">"</span></span>:[<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>],<span class="pl-s"><span class="pl-pds">"</span>count<span class="pl-pds">"</span></span>:<span class="pl-c1">2</span>}</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/umatrangolo">umatrangolo</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
